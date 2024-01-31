@@ -80,7 +80,7 @@ public:
             throw std::runtime_error("failed to create instance!");
         }
 
-        
+        volkLoadInstance(instance);
     }
 
     void createSurface() {

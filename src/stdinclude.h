@@ -2,18 +2,18 @@
 
 #include <vulkan/vulkan.h>
 
-#include <iostream>
-#include <stdexcept>
 #include <algorithm>
-#include <vector>
-#include <cstring>
-#include <cstdlib>
-#include <cstdint>
-#include <optional>
 #include <array>
 #include <chrono>
+#include <cstdint>
+#include <cstdlib>
+#include <cstring>
 #include <fstream>
+#include <iostream>
+#include <optional>
 #include <set>
+#include <stdexcept>
+#include <vector>
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -60,8 +60,9 @@ struct Vertex {
     glm::vec3 color;
     glm::vec2 texCoord;
 
-    static VkVertexInputBindingDescription getBindingDescription() {
-        VkVertexInputBindingDescription bindingDescription{};
+    static VkVertexInputBindingDescription getBindingDescription()
+    {
+        VkVertexInputBindingDescription bindingDescription {};
         bindingDescription.binding = 0;
         bindingDescription.stride = sizeof(Vertex);
         bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
@@ -69,8 +70,9 @@ struct Vertex {
         return bindingDescription;
     }
 
-    static std::array<VkVertexInputAttributeDescription, 4> getAttributeDescriptions() {
-        std::array<VkVertexInputAttributeDescription, 4> attributeDescriptions{};
+    static std::array<VkVertexInputAttributeDescription, 4> getAttributeDescriptions()
+    {
+        std::array<VkVertexInputAttributeDescription, 4> attributeDescriptions {};
         attributeDescriptions[0].binding = 0;
         attributeDescriptions[0].location = 0;
         attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
@@ -80,7 +82,7 @@ struct Vertex {
         attributeDescriptions[1].location = 1;
         attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
         attributeDescriptions[1].offset = offsetof(Vertex, normal);
-        
+
         attributeDescriptions[2].binding = 0;
         attributeDescriptions[2].location = 2;
         attributeDescriptions[2].format = VK_FORMAT_R32G32B32_SFLOAT;
@@ -100,14 +102,13 @@ struct Vertex {
 
         float temp = (1.0f / 255);
 
-        setColor = { temp * r, temp * g, temp * b};
+        setColor = { temp * r, temp * g, temp * b };
 
         return setColor;
-
     }
 };
 
-struct ShadersPath{
+struct ShadersPath {
     std::string vertShader;
     std::string fragShader;
 };
@@ -130,7 +131,8 @@ struct QueueFamilyIndices {
     std::optional<uint32_t> graphicsFamily;
     std::optional<uint32_t> presentFamily;
 
-    bool isComplete() {
+    bool isComplete()
+    {
         return graphicsFamily.has_value() && presentFamily.has_value();
     }
 };
