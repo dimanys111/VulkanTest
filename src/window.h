@@ -3,6 +3,7 @@
 #include "stdinclude.h"
 
 #include "resource.h"
+#include <volk.h>
 
 class WindowManager{
 public:
