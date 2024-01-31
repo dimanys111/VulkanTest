@@ -20,7 +20,7 @@ include(component_helper)
 # Add third party libraries
 add_subdirectory(../test_vulkan_hpp_my/third_party third_party)
 
-file(GLOB_RECURSE FILES_SRC src/*.*)
+file(GLOB_RECURSE FILES_SRC src/*.cpp)
 
 add_executable(${PROJECT_NAME} WIN32 ${FILES_SRC})
 
