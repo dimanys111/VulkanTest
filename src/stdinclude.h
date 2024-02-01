@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vulkan/vulkan.h>
+#include "volk.h"
 
 #include <algorithm>
 #include <array>
@@ -29,7 +29,7 @@
 #include <glm/gtx/rotate_vector.hpp>
 
 #define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
+// #include <stb_image.h>
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
