@@ -9,12 +9,10 @@
 #include "gameObject.h"
 #include "resource.h"
 
-class DirLight{
+class DirLight {
 public:
     DirLight(Device* device, Camera* camera, ShadersPath paths);
     ~DirLight();
-    void Init();
-
     void Update(float deltaTime);
 
     void SetTarget(glm::vec3 pos);
@@ -28,5 +26,4 @@ public:
 
     glm::vec3 sunPos;
     glm::vec3 target;
-
 };

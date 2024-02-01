@@ -1,17 +1,16 @@
 #include "dirLight.h"
 
-
-DirLight::DirLight(Device *device, Camera *camera, ShadersPath paths)
+DirLight::DirLight(Device* device, Camera* camera, ShadersPath paths)
 {
     this->camera = camera;
 
     PrimitiveObject pObject = Tools::GetPrimitives(PrimitiveType::PRIMITIVE_TYPE_QUAD);
-    pObject.vertices[0].color = pObject.vertices[0].ColorGet(76, 60, 24);
-    pObject.vertices[1].color = pObject.vertices[0].ColorGet(76, 60, 24);
-    pObject.vertices[2].color = pObject.vertices[0].ColorGet(76, 60, 24);
-    pObject.vertices[3].color = pObject.vertices[0].ColorGet(76, 60, 24);
+    pObject.vertices[0].color = Vertex::ColorGet(76, 60, 24);
+    pObject.vertices[1].color = Vertex::ColorGet(76, 60, 24);
+    pObject.vertices[2].color = Vertex::ColorGet(76, 60, 24);
+    pObject.vertices[3].color = Vertex::ColorGet(76, 60, 24);
 
-    go = new GameObject (device, camera);
+    go = new GameObject(device, camera);
 
     go->SetShadersName(paths.vertShader, paths.fragShader);
     go->setVertex(pObject.vertices);
@@ -20,17 +19,12 @@ DirLight::DirLight(Device *device, Camera *camera, ShadersPath paths)
     go->Init();
 
     distance = 250;
-
+    Resource::sunDir = glm::vec3(1, -1, 1);
 }
 
 DirLight::~DirLight()
 {
     delete go;
-}
-
-void DirLight::Init()
-{
-    Resource::sunDir = glm::vec3(1,-1,1);
 }
 
 void DirLight::Update(float deltaTime)
@@ -41,13 +35,13 @@ void DirLight::Update(float deltaTime)
     sunPos.x -= distance * cos(resultAngle);
     sunPos.z -= distance * sin(resultAngle);
 
-    angle ++;
+    angle++;
 
-    if(angle >=360 * m_del)
+    if (angle >= 360 * m_del)
         angle = 0;
 
     go->SetPosition(sunPos);
-    go->SetRotation(glm::vec3(0,-resultAngle + 90,0) * 10.0f);
+    go->SetRotation(glm::vec3(0, -resultAngle + 90, 0) * 10.0f);
     Resource::sunDir = glm::vec3(cos(resultAngle), -0.5f, sin(resultAngle));
     go->Update(deltaTime);
 }

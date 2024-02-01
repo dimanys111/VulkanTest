@@ -1,14 +1,12 @@
 #include "graphics.h"
 
-
-Graphics::Graphics(WindowManager *window, Device *device, SwapChain *swapchain)
+Graphics::Graphics(WindowManager* window, Device* device, SwapChain* swapchain)
 {
     this->window = window;
     this->device = device;
     this->swapchain = swapchain;
 
     renderer = new Renderer(device);
-
 }
 
 Graphics::~Graphics()
@@ -24,25 +22,25 @@ Graphics::~Graphics()
     for (auto framebuffer : swapChainFramebuffers) {
         vkDestroyFramebuffer(device->device, framebuffer, nullptr);
     }
-
 }
 
-void Graphics::SetGameObject(GameObject *go)
+void Graphics::SetGameObject(GameObject* go)
 {
     gameObjects.push_back(go);
 }
 
-void Graphics::Init(){
+void Graphics::Init()
+{
     createDepthResources();
     createFramebuffers();
-    for(auto go : gameObjects)
-    {
+    for (auto go : gameObjects) {
         renderer->createGraphicsPipeline(go->vertFile, go->fragFile, go->pipeline);
     }
     createCommandBuffers();
 }
 
-void Graphics::createFramebuffers() {
+void Graphics::createFramebuffers()
+{
     swapChainFramebuffers.resize(Resource::countFrames);
     for (size_t i = 0; i < swapchain->swapChainImageViews.size(); i++) {
         std::array<VkImageView, 2> attachments = {
@@ -50,7 +48,7 @@ void Graphics::createFramebuffers() {
             depthImageView
         };
 
-        VkFramebufferCreateInfo framebufferInfo{};
+        VkFramebufferCreateInfo framebufferInfo {};
         framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
         framebufferInfo.renderPass = renderer->renderPass;
         framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
@@ -65,32 +63,33 @@ void Graphics::createFramebuffers() {
     }
 }
 
-void Graphics::createDepthResources() {
+void Graphics::createDepthResources()
+{
     VkFormat depthFormat = renderer->findDepthFormat();
 
     Tools::createImage(Resource::swapChainExtent.width, Resource::swapChainExtent.height, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, depthImage, depthImageMemory);
     depthImageView = Tools::createImageView(depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
 }
 
-void Graphics::createCommandBuffers() {
+void Graphics::createCommandBuffers()
+{
     commandBuffers.resize(Resource::countFrames);
 
-    VkCommandBufferAllocateInfo allocInfo{};
+    VkCommandBufferAllocateInfo allocInfo {};
     allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     allocInfo.commandPool = Resource::commandPool;
     allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-    allocInfo.commandBufferCount = (uint32_t) commandBuffers.size();
+    allocInfo.commandBufferCount = (uint32_t)commandBuffers.size();
 
     if (vkAllocateCommandBuffers(device->device, &allocInfo, commandBuffers.data()) != VK_SUCCESS) {
         throw std::runtime_error("failed to allocate command buffers!");
     }
-
 }
 
 void Graphics::setCommandBuffers()
 {
     for (size_t i = 0; i < commandBuffers.size(); i++) {
-        VkCommandBufferBeginInfo beginInfo{};
+        VkCommandBufferBeginInfo beginInfo {};
         beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
         beginInfo.flags = 0; // Optional
         beginInfo.pInheritanceInfo = nullptr; // Optional
@@ -99,23 +98,22 @@ void Graphics::setCommandBuffers()
             throw std::runtime_error("failed to begin recording command buffer!");
         }
 
-        VkRenderPassBeginInfo renderPassInfo{};
+        VkRenderPassBeginInfo renderPassInfo {};
         renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
         renderPassInfo.renderPass = renderer->renderPass;
         renderPassInfo.framebuffer = swapChainFramebuffers[i];
-        renderPassInfo.renderArea.offset = {0, 0};
+        renderPassInfo.renderArea.offset = { 0, 0 };
         renderPassInfo.renderArea.extent = Resource::swapChainExtent;
 
-        std::array<VkClearValue, 2> clearValues{};
-        clearValues[0].color = {{0.0f, 0.0f, 0.0f, 1.0f}};
-        clearValues[1].depthStencil = {1.0f, 0};
+        std::array<VkClearValue, 2> clearValues {};
+        clearValues[0].color = { { 0.0f, 0.0f, 0.0f, 1.0f } };
+        clearValues[1].depthStencil = { 1.0f, 0 };
 
         renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
         renderPassInfo.pClearValues = clearValues.data();
         vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-        for(auto go : gameObjects)
-        {
+        for (auto go : gameObjects) {
             vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, go->pipeline->graphicsPipeline);
 
             go->Draw(commandBuffers[i], i);
