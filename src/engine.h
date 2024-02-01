@@ -22,14 +22,13 @@ public:
             vkDestroyFence(device->device, inFlightFences[i], nullptr);
         }
 
+        vkDestroyDescriptorPool(device->device, imguiPool, nullptr);
+
         delete game;
         delete graphics;
         delete swapchain;
-        // ImGui_ImplVulkanH_DestroyWindow(window->instance, device->device, &Resource::g_MainWindowData, window->g_Allocator);
         delete device;
         delete window;
-
-        vkDestroyDescriptorPool(device->device, imguiPool, nullptr);
     }
 
 public:
@@ -142,9 +141,6 @@ public:
         {
             // Use any command queue
             VkCommandBuffer command_buffer = Tools::beginSingleTimeCommands();
-
-            ImGui_ImplVulkan_CreateFontsTexture();
-
             Tools::endSingleTimeCommands(command_buffer);
         }
     }
