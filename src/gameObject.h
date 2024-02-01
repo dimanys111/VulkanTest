@@ -1,34 +1,33 @@
 #pragma once
 
-#include  "stdinclude.h"
+#include "stdinclude.h"
 
-#include "entity.h"
-#include "device.h"
-#include "resource.h"
 #include "camera.h"
+#include "device.h"
+#include "entity.h"
+#include "resource.h"
 
-class GameObject : public Entity{
+class GameObject : public Entity {
 public:
     GameObject(Device* device, Camera* camera);
     ~GameObject();
     void Init();
 
     void Update(float deltaTime);
-    
+
     void setVertex(std::vector<Vertex> vertices);
-    
+
     void setIndices(std::vector<uint16_t> indices);
 
     void SetPosition(glm::vec3 position);
 
-    
     void AppyTransforms(float deltaTime);
 
     glm::vec3 GetPosition();
 
     void SetSize(glm::vec3 size);
 
-    void SetShadersName(std::string vertFile,std::string fragFile);
+    void SetShadersName(std::string vertFile, std::string fragFile);
 
     void SetRotation(glm::vec3 rotation);
 
@@ -36,11 +35,11 @@ public:
 
     glm::vec3 GetRotate();
 
-    std::string vertFile, fragFile;   
-    
+    std::string vertFile, fragFile;
+
     bool applyLight;
 
-private :
+private:
     void updateUniformBuffer(float deltaTime);
 
     glm::vec3 size;

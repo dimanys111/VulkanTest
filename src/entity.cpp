@@ -33,10 +33,7 @@ void Entity::Init()
     pipeline->Init();
 }
 
-void Entity::SetFrontFace(VkFrontFace face)
-{
-    pipeline->face = face;
-}
+void Entity::SetFrontFace(VkFrontFace face) { pipeline->face = face; }
 
 void Entity::LoadTexture(std::string filepath)
 {
@@ -62,22 +59,16 @@ void Entity::LoadModel(std::string filepath)
         for (const auto& index : shape.mesh.indices) {
             Vertex vertex {};
 
-            vertex.pos = {
-                attrib.vertices[3 * index.vertex_index + 0],
+            vertex.pos = { attrib.vertices[3 * index.vertex_index + 0],
                 attrib.vertices[3 * index.vertex_index + 1],
-                attrib.vertices[3 * index.vertex_index + 2]
-            };
+                attrib.vertices[3 * index.vertex_index + 2] };
 
-            vertex.normal = {
-                attrib.normals[index.normal_index * 3 + 0],
+            vertex.normal = { attrib.normals[index.normal_index * 3 + 0],
                 attrib.normals[index.normal_index * 3 + 1],
-                attrib.normals[index.normal_index * 3 + 2]
-            };
+                attrib.normals[index.normal_index * 3 + 2] };
 
-            vertex.texCoord = {
-                attrib.texcoords[2 * index.texcoord_index + 0],
-                1.0f - attrib.texcoords[2 * index.texcoord_index + 1]
-            };
+            vertex.texCoord = { attrib.texcoords[2 * index.texcoord_index + 0],
+                1.0f - attrib.texcoords[2 * index.texcoord_index + 1] };
 
             vertex.color = { 0.5f, 0.5f, 0.5f };
 
@@ -90,7 +81,8 @@ void Entity::LoadModel(std::string filepath)
 void Entity::createTextureImage(std::string filepath)
 {
     int texWidth, texHeight, texChannels;
-    stbi_uc* pixels = stbi_load(filepath.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+    stbi_uc* pixels
+        = stbi_load(filepath.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
     VkDeviceSize imageSize = texWidth * texHeight * 4;
 
     if (!pixels) {
@@ -99,7 +91,9 @@ void Entity::createTextureImage(std::string filepath)
 
     VkBuffer stagingBuffer;
     VkDeviceMemory stagingBufferMemory;
-    Tools::createBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+    Tools::createBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer,
+        stagingBufferMemory);
 
     void* data;
     vkMapMemory(device->device, stagingBufferMemory, 0, imageSize, 0, &data);
@@ -108,11 +102,15 @@ void Entity::createTextureImage(std::string filepath)
 
     stbi_image_free(pixels);
 
-    Tools::createImage(texWidth, texHeight, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, textureImage, textureImageMemory);
+    Tools::createImage(texWidth, texHeight, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL,
+        VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, textureImage, textureImageMemory);
 
-    transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+    transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED,
+        VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
-    Tools::copyBufferToImage(stagingBuffer, textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
+    Tools::copyBufferToImage(stagingBuffer, textureImage, static_cast<uint32_t>(texWidth),
+        static_cast<uint32_t>(texHeight));
 
     vkDestroyBuffer(device->device, stagingBuffer, nullptr);
     vkFreeMemory(device->device, stagingBufferMemory, nullptr);
@@ -120,10 +118,12 @@ void Entity::createTextureImage(std::string filepath)
 
 void Entity::createTextureImageView()
 {
-    pipeline->textureImageView = Tools::createImageView(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
+    pipeline->textureImageView
+        = Tools::createImageView(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
 }
 
-void Entity::transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout)
+void Entity::transitionImageLayout(
+    VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout)
 {
     VkCommandBuffer commandBuffer = Tools::beginSingleTimeCommands();
 
@@ -145,13 +145,15 @@ void Entity::transitionImageLayout(VkImage image, VkFormat format, VkImageLayout
     VkPipelineStageFlags sourceStage;
     VkPipelineStageFlags destinationStage;
 
-    if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
+    if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED
+        && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
         barrier.srcAccessMask = 0;
         barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
 
         sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
         destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-    } else if (oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
+    } else if (oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+        && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
         barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
         barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
@@ -162,12 +164,7 @@ void Entity::transitionImageLayout(VkImage image, VkFormat format, VkImageLayout
     }
 
     vkCmdPipelineBarrier(
-        commandBuffer,
-        sourceStage, destinationStage,
-        0,
-        0, nullptr,
-        0, nullptr,
-        1, &barrier);
+        commandBuffer, sourceStage, destinationStage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
 
     Tools::endSingleTimeCommands(commandBuffer);
 }
@@ -186,7 +183,8 @@ void Entity::Draw(VkCommandBuffer commandBuffer, int i)
     if (m_model->indices.size() > 0)
         vkCmdBindIndexBuffer(commandBuffer, m_model->indexBuffer, 0, VK_INDEX_TYPE_UINT16);
 
-    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipelineLayout, 0, 1, &pipeline->descriptorSets[i], 0, nullptr);
+    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
+        pipeline->pipelineLayout, 0, 1, &pipeline->descriptorSets[i], 0, nullptr);
     // vkCmdDraw(commandBuffer, static_cast<uint32_t>(vertices.size()), 1, 0, 0);
     vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(m_model->indices.size()), 1, 0, 0, 0);
 }

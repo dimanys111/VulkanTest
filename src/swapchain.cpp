@@ -1,12 +1,13 @@
 #include "swapchain.h"
 
-
-SwapChain::SwapChain(WindowManager *window, Device *device){
+SwapChain::SwapChain(WindowManager* window, Device* device)
+{
     this->window = window;
     this->device = device;
 }
 
-SwapChain::~SwapChain(){
+SwapChain::~SwapChain()
+{
     for (auto imageView : swapChainImageViews) {
         vkDestroyImageView(device->device, imageView, nullptr);
     }
@@ -14,12 +15,14 @@ SwapChain::~SwapChain(){
     vkDestroySwapchainKHR(device->device, swapChain, nullptr);
 }
 
-void SwapChain::Init(){
+void SwapChain::Init()
+{
     createSwapChain();
     createImageViews();
 }
 
-void SwapChain::createSwapChain() {
+void SwapChain::createSwapChain()
+{
     SwapChainSupportDetails swapChainSupport = querySwapChainSupport();
 
     VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
@@ -28,11 +31,12 @@ void SwapChain::createSwapChain() {
 
     uint32_t imageCount = swapChainSupport.capabilities.minImageCount + 1;
 
-    if (swapChainSupport.capabilities.maxImageCount > 0 && imageCount > swapChainSupport.capabilities.maxImageCount) {
+    if (swapChainSupport.capabilities.maxImageCount > 0
+        && imageCount > swapChainSupport.capabilities.maxImageCount) {
         imageCount = swapChainSupport.capabilities.maxImageCount;
     }
 
-    VkSwapchainCreateInfoKHR createInfo{};
+    VkSwapchainCreateInfoKHR createInfo {};
     createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
     createInfo.surface = window->surface;
     createInfo.minImageCount = imageCount;
@@ -43,7 +47,8 @@ void SwapChain::createSwapChain() {
     createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
     QueueFamilyIndices indices = device->findQueueFamilies(device->physicalDevice);
-    uint32_t queueFamilyIndices[] = {indices.graphicsFamily.value(), indices.presentFamily.value()};
+    uint32_t queueFamilyIndices[]
+        = { indices.graphicsFamily.value(), indices.presentFamily.value() };
 
     if (indices.graphicsFamily != indices.presentFamily) {
         createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
@@ -72,47 +77,55 @@ void SwapChain::createSwapChain() {
     Resource::swapChainImageFormat = surfaceFormat.format;
     Resource::swapChainExtent = extent;
     Resource::countFrames = imageCount;
-
 }
 
-void SwapChain::createImageViews() {
+void SwapChain::createImageViews()
+{
     swapChainImageViews.resize(Resource::countFrames);
 
     for (size_t i = 0; i < Resource::countFrames; i++) {
 
-        swapChainImageViews[i] = Tools::createImageView(swapChainImages[i], Resource::swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT);
-
+        swapChainImageViews[i] = Tools::createImageView(
+            swapChainImages[i], Resource::swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT);
     }
-
 }
 
-SwapChainSupportDetails SwapChain::querySwapChainSupport() {
+SwapChainSupportDetails SwapChain::querySwapChainSupport()
+{
     SwapChainSupportDetails details;
 
-    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device->physicalDevice, window->surface, &details.capabilities);
+    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
+        device->physicalDevice, window->surface, &details.capabilities);
 
     uint32_t formatCount;
-    vkGetPhysicalDeviceSurfaceFormatsKHR(device->physicalDevice, window->surface, &formatCount, nullptr);
+    vkGetPhysicalDeviceSurfaceFormatsKHR(
+        device->physicalDevice, window->surface, &formatCount, nullptr);
 
     if (formatCount != 0) {
         details.formats.resize(formatCount);
-        vkGetPhysicalDeviceSurfaceFormatsKHR(device->physicalDevice, window->surface, &formatCount, details.formats.data());
+        vkGetPhysicalDeviceSurfaceFormatsKHR(
+            device->physicalDevice, window->surface, &formatCount, details.formats.data());
     }
 
     uint32_t presentModeCount;
-    vkGetPhysicalDeviceSurfacePresentModesKHR(device->physicalDevice, window->surface, &presentModeCount, nullptr);
+    vkGetPhysicalDeviceSurfacePresentModesKHR(
+        device->physicalDevice, window->surface, &presentModeCount, nullptr);
 
     if (presentModeCount != 0) {
         details.presentModes.resize(presentModeCount);
-        vkGetPhysicalDeviceSurfacePresentModesKHR(device->physicalDevice, window->surface, &presentModeCount, details.presentModes.data());
+        vkGetPhysicalDeviceSurfacePresentModesKHR(device->physicalDevice, window->surface,
+            &presentModeCount, details.presentModes.data());
     }
 
     return details;
 }
 
-VkSurfaceFormatKHR SwapChain::chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> &availableFormats) {
+VkSurfaceFormatKHR SwapChain::chooseSwapSurfaceFormat(
+    const std::vector<VkSurfaceFormatKHR>& availableFormats)
+{
     for (const auto& availableFormat : availableFormats) {
-        if (availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
+        if (availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB
+            && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
             return availableFormat;
         }
     }
@@ -120,7 +133,9 @@ VkSurfaceFormatKHR SwapChain::chooseSwapSurfaceFormat(const std::vector<VkSurfac
     return availableFormats[0];
 }
 
-VkPresentModeKHR SwapChain::chooseSwapPresentMode(const std::vector<VkPresentModeKHR> &availablePresentModes) {
+VkPresentModeKHR SwapChain::chooseSwapPresentMode(
+    const std::vector<VkPresentModeKHR>& availablePresentModes)
+{
 
     for (const auto& availablePresentMode : availablePresentModes) {
         if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
@@ -131,20 +146,20 @@ VkPresentModeKHR SwapChain::chooseSwapPresentMode(const std::vector<VkPresentMod
     return VK_PRESENT_MODE_FIFO_KHR;
 }
 
-VkExtent2D SwapChain::chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities) {
+VkExtent2D SwapChain::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities)
+{
     if (capabilities.currentExtent.width != UINT32_MAX) {
         return capabilities.currentExtent;
     } else {
         int width, height;
         glfwGetFramebufferSize(window->window, &width, &height);
 
-        VkExtent2D actualExtent = {
-            static_cast<uint32_t>(width),
-            static_cast<uint32_t>(height)
-        };
+        VkExtent2D actualExtent = { static_cast<uint32_t>(width), static_cast<uint32_t>(height) };
 
-        actualExtent.width = std::clamp(actualExtent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
-        actualExtent.height = std::clamp(actualExtent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
+        actualExtent.width = std::clamp(actualExtent.width, capabilities.minImageExtent.width,
+            capabilities.maxImageExtent.width);
+        actualExtent.height = std::clamp(actualExtent.height, capabilities.minImageExtent.height,
+            capabilities.maxImageExtent.height);
 
         return actualExtent;
     }

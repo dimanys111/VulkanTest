@@ -4,8 +4,7 @@
 
 #define KEYS 349
 
-class Resource
-{
+class Resource {
 public:
     inline static VkCommandPool commandPool;
     inline static bool pressed[KEYS];

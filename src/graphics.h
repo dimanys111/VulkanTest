@@ -5,26 +5,25 @@
 #include "resource.h"
 
 #include "device.h"
+#include "renderer.h"
+#include "swapchain.h"
 #include "tools.h"
 #include "window.h"
-#include "swapchain.h"
-#include "renderer.h"
 
 #include "gameObject.h"
 
-class Graphics{
+class Graphics {
 public:
-    Graphics(WindowManager *window, Device* device, SwapChain* swapchain);
+    Graphics(WindowManager* window, Device* device, SwapChain* swapchain);
     ~Graphics();
 
     void SetGameObject(GameObject* go);
 
     void Init();
-    
+
     void createFramebuffers();
 
     void createDepthResources();
-
 
     void createCommandBuffers();
 
@@ -40,7 +39,6 @@ public:
     Renderer* renderer;
 
     std::vector<GameObject*> gameObjects;
-
 
     VkImage depthImage;
     VkDeviceMemory depthImageMemory;

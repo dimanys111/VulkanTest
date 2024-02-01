@@ -1,10 +1,11 @@
 #include "engine.h"
 
-int main() {
+int main()
+{
     Engine* engine = new Engine();
 
     engine->Init();
-    
+
     try {
         engine->Run();
     } catch (const std::exception& e) {

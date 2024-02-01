@@ -2,15 +2,15 @@
 
 #include "stdinclude.h"
 
-#include "skyBox.h"
 #include "gameObject.h"
+#include "skyBox.h"
 
 #include "dirLight.h"
 
 #include "device.h"
 #include "graphics.h"
 
-class Game{
+class Game {
 public:
     Game(Device* device, Graphics* graphics);
     ~Game();
@@ -23,15 +23,14 @@ public:
     Graphics* graphics;
 
     SkyBox* skyBox;
-    
+
     Camera* camera;
 
     GameObject* gameObject;
 
     DirLight* dirLight;
 
-    Device* device; 
+    Device* device;
 
     std::vector<std::vector<std::vector<GameObject*>>> chunks;
-
 };

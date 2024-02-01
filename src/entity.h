@@ -22,7 +22,8 @@ public:
 
     void createTextureImageView();
 
-    void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
+    void transitionImageLayout(
+        VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
 
     void Draw(VkCommandBuffer commandBuffer, int i);
 

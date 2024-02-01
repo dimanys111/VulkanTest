@@ -13,9 +13,7 @@ Camera::Camera(float width, float height)
     pitch = 0.0f;
 }
 
-Camera::~Camera()
-{
-}
+Camera::~Camera() { }
 
 void Camera::processMouse(float xpos, float ypos, GLboolean constrainPitch)
 {
@@ -76,7 +74,4 @@ void Camera::Update(float deltaTime)
     view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 }
 
-glm::vec3 Camera::GetPosition()
-{
-    return cameraPos * 10.f;
-}
+glm::vec3 Camera::GetPosition() { return cameraPos * 10.f; }

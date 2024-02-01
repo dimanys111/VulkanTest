@@ -7,8 +7,7 @@
 #include "camera.h"
 #include "gameObject.h"
 
-
-class SkyBox{
+class SkyBox {
 public:
     SkyBox(Device* device, Camera* camera, ShadersPath paths);
     ~SkyBox();

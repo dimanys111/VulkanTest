@@ -24,10 +24,7 @@ Graphics::~Graphics()
     }
 }
 
-void Graphics::SetGameObject(GameObject* go)
-{
-    gameObjects.push_back(go);
-}
+void Graphics::SetGameObject(GameObject* go) { gameObjects.push_back(go); }
 
 void Graphics::Init()
 {
@@ -43,10 +40,8 @@ void Graphics::createFramebuffers()
 {
     swapChainFramebuffers.resize(Resource::countFrames);
     for (size_t i = 0; i < swapchain->swapChainImageViews.size(); i++) {
-        std::array<VkImageView, 2> attachments = {
-            swapchain->swapChainImageViews[i],
-            depthImageView
-        };
+        std::array<VkImageView, 2> attachments
+            = { swapchain->swapChainImageViews[i], depthImageView };
 
         VkFramebufferCreateInfo framebufferInfo {};
         framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
@@ -57,7 +52,9 @@ void Graphics::createFramebuffers()
         framebufferInfo.height = Resource::swapChainExtent.height;
         framebufferInfo.layers = 1;
 
-        if (vkCreateFramebuffer(device->device, &framebufferInfo, nullptr, &swapChainFramebuffers[i]) != VK_SUCCESS) {
+        if (vkCreateFramebuffer(
+                device->device, &framebufferInfo, nullptr, &swapChainFramebuffers[i])
+            != VK_SUCCESS) {
             throw std::runtime_error("failed to create framebuffer!");
         }
     }
@@ -67,7 +64,9 @@ void Graphics::createDepthResources()
 {
     VkFormat depthFormat = renderer->findDepthFormat();
 
-    Tools::createImage(Resource::swapChainExtent.width, Resource::swapChainExtent.height, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, depthImage, depthImageMemory);
+    Tools::createImage(Resource::swapChainExtent.width, Resource::swapChainExtent.height,
+        depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, depthImage, depthImageMemory);
     depthImageView = Tools::createImageView(depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
 }
 
@@ -114,7 +113,8 @@ void Graphics::setCommandBuffers()
         vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
         for (auto go : gameObjects) {
-            vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, go->pipeline->graphicsPipeline);
+            vkCmdBindPipeline(
+                commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, go->pipeline->graphicsPipeline);
 
             go->Draw(commandBuffers[i], i);
         }

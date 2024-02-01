@@ -3,10 +3,12 @@
 #include "stdinclude.h"
 #include "window.h"
 
-class Device{
+class Device {
 public:
-    Device(WindowManager* window);;
-    ~Device();;
+    Device(WindowManager* window);
+    ;
+    ~Device();
+    ;
 
     void Init();
 
@@ -26,12 +28,11 @@ public:
 
     VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
     VkDevice device;
-    
+
     VkQueue graphicsQueue;
     VkQueue presentQueue;
 
     uint32_t g_QueueFamily;
 
     WindowManager* window;
-
 };

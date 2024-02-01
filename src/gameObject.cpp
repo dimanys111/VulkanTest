@@ -7,14 +7,9 @@ GameObject::GameObject(Device* device, Camera* camera)
     model = glm::mat4(1.0f);
 }
 
-GameObject::~GameObject()
-{
-}
+GameObject::~GameObject() { }
 
-void GameObject::Init()
-{
-    Entity::Init();
-}
+void GameObject::Init() { Entity::Init(); }
 
 void GameObject::Update(float deltaTime)
 {
@@ -22,15 +17,9 @@ void GameObject::Update(float deltaTime)
     updateUniformBuffer(deltaTime);
 }
 
-void GameObject::setVertex(std::vector<Vertex> vertices)
-{
-    this->m_model->vertices = vertices;
-}
+void GameObject::setVertex(std::vector<Vertex> vertices) { this->m_model->vertices = vertices; }
 
-void GameObject::setIndices(std::vector<uint16_t> indices)
-{
-    this->m_model->indices = indices;
-}
+void GameObject::setIndices(std::vector<uint16_t> indices) { this->m_model->indices = indices; }
 
 void GameObject::SetPosition(glm::vec3 position)
 {
@@ -51,15 +40,9 @@ void GameObject::AppyTransforms(float deltaTime)
     model = translateMatrix * rotationMatrix * scaleMatrix * deltaTime;
 }
 
-glm::vec3 GameObject::GetPosition()
-{
-    return position * 10.0f;
-}
+glm::vec3 GameObject::GetPosition() { return position * 10.0f; }
 
-void GameObject::SetSize(glm::vec3 size)
-{
-    this->size = size;
-}
+void GameObject::SetSize(glm::vec3 size) { this->size = size; }
 
 void GameObject::SetShadersName(std::string vertFile, std::string fragFile)
 {
@@ -79,17 +62,15 @@ void GameObject::Rotating(glm::vec3 rotation)
     this->rotate += rotation;
 }
 
-glm::vec3 GameObject::GetRotate()
-{
-    return rotate * 10.0f;
-}
+glm::vec3 GameObject::GetRotate() { return rotate * 10.0f; }
 
 void GameObject::updateUniformBuffer(float deltaTime)
 {
     static auto startTime = std::chrono::high_resolution_clock::now();
 
     auto currentTime = std::chrono::high_resolution_clock::now();
-    float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+    float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime)
+                     .count();
 
     UniformBufferObject ubo {};
     ubo.model = model;
@@ -99,7 +80,8 @@ void GameObject::updateUniformBuffer(float deltaTime)
     ubo.sunDir = applyLight ? Resource::sunDir : glm::vec3(1.0f, -3.0f, -1.0f);
 
     void* data;
-    vkMapMemory(device->device, pipeline->uniformBuffersMemory[Resource::currentImage], 0, sizeof(ubo), 0, &data);
+    vkMapMemory(device->device, pipeline->uniformBuffersMemory[Resource::currentImage], 0,
+        sizeof(ubo), 0, &data);
     memcpy(data, &ubo, sizeof(ubo));
     vkUnmapMemory(device->device, pipeline->uniformBuffersMemory[Resource::currentImage]);
 }

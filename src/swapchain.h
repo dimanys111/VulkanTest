@@ -1,13 +1,13 @@
 #pragma once
 
+#include "device.h"
 #include "stdinclude.h"
 #include "window.h"
-#include "device.h"
 
-#include "tools.h"
 #include "resource.h"
+#include "tools.h"
 
-class SwapChain{
+class SwapChain {
 public:
     SwapChain(WindowManager* window, Device* device);
 
@@ -21,9 +21,11 @@ public:
 
     SwapChainSupportDetails querySwapChainSupport();
 
-    VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+    VkSurfaceFormatKHR chooseSwapSurfaceFormat(
+        const std::vector<VkSurfaceFormatKHR>& availableFormats);
 
-    VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
+    VkPresentModeKHR chooseSwapPresentMode(
+        const std::vector<VkPresentModeKHR>& availablePresentModes);
 
     VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
 

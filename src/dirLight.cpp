@@ -22,10 +22,7 @@ DirLight::DirLight(Device* device, Camera* camera, ShadersPath paths)
     Resource::sunDir = glm::vec3(1, -1, 1);
 }
 
-DirLight::~DirLight()
-{
-    delete go;
-}
+DirLight::~DirLight() { delete go; }
 
 void DirLight::Update(float deltaTime)
 {
@@ -46,7 +43,4 @@ void DirLight::Update(float deltaTime)
     go->Update(deltaTime);
 }
 
-void DirLight::SetTarget(glm::vec3 pos)
-{
-    target = pos;
-}
+void DirLight::SetTarget(glm::vec3 pos) { target = pos; }

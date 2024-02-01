@@ -5,20 +5,20 @@
 #include "device.h"
 #include "tools.h"
 
-class Model{
+class Model {
 public:
     Model(Device* device);
     ~Model();
     void Init();
 
     void createVertexBuffer();
-    
+
     void createIndexBuffer();
 
     std::vector<Vertex> vertices;
 
     std::vector<uint16_t> indices;
-    
+
     VkBuffer vertexBuffer;
     VkDeviceMemory vertexBufferMemory;
     VkBuffer indexBuffer;
@@ -27,5 +27,4 @@ public:
     VkDeviceMemory textureImageMemory;
 
     Device* device;
-
 };
