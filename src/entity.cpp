@@ -1,6 +1,8 @@
 #include "entity.h"
 #include "stdinclude.h"
-#include <stb_image.h>
+
+#define STB_IMAGE_IMPLEMENTATION // use of stb functions once and for all
+#include "stb_image.h"
 
 Entity::Entity(Device* device, Camera* camera)
 {

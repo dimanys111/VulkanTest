@@ -18,9 +18,9 @@ include(check_atomic)
 include(component_helper)
 
 # Add third party libraries
-add_subdirectory(../test_vulkan_hpp_my/third_party third_party)
+add_subdirectory(../Vulkan-Samples/third_party third_party)
 
-file(GLOB FILES_SRC CONFIGURE_DEPENDS src/imgui/*.cpp src/obj_loader/*.cpp src/imgui/*.h src/obj_loader/*.h)
+file(GLOB FILES_SRC CONFIGURE_DEPENDS src/obj_loader/*.*)
 
 set(FILES_SRC_MY 
     src/main.cpp
@@ -63,7 +63,7 @@ add_executable(${PROJECT_NAME} WIN32 ${FILES_SRC} ${FILES_SRC_MY})
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE glfw glm stb volk)
+target_link_libraries(${PROJECT_NAME} PRIVATE glfw glm stb volk imgui)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE NDEBUG)
 
