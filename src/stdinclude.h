@@ -1,36 +1,19 @@
 #pragma once
 
-#include "volk.h"
-
-#include <algorithm>
 #include <array>
 #include <chrono>
-#include <cstdint>
-#include <cstdlib>
-#include <cstring>
 #include <fstream>
 #include <iostream>
 #include <optional>
 #include <set>
-#include <stdexcept>
-#include <vector>
-
-#define _USE_MATH_DEFINES
-#include <math.h>
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
-#define GLM_FORCE_RADIANS
-#define GLM_FORCE_DEPTH_ZERO_TO_ONE
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 
-#include "imgui/imgui.h"
-#include "imgui/imgui_impl_glfw.h"
-#include "imgui/imgui_impl_vulkan.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_vulkan.h"
 
 #include "obj_loader/tiny_obj_loader.h"
 

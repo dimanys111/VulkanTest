@@ -1,6 +1,5 @@
 #include "engine.h"
 
-
 Engine::Engine() { }
 
 Engine::~Engine()
@@ -25,16 +24,11 @@ void Engine::Init()
 {
     printf("Initializing vulkan instance.");
 
-    if (volkInitialize()) {
-        throw std::runtime_error("Failed to initialize volk.");
-    }
-
     window = new WindowManager();
     window->Init();
 
     device = new Device(window);
     device->Init();
-    // device->setupImGUI();
 
     Tools::device = device;
 
@@ -188,7 +182,7 @@ void Engine::draw()
     FramePresent(imageIndex);
 }
 
-void Engine::FrameRender(uint32_t *imageIndex)
+void Engine::FrameRender(uint32_t* imageIndex)
 {
     VkResult err;
 

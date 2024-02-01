@@ -1,6 +1,5 @@
 #include "window.h"
 
-
 WindowManager::WindowManager() { }
 
 WindowManager::~WindowManager()
@@ -76,8 +75,6 @@ void WindowManager::createInstance()
     if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
         throw std::runtime_error("failed to create instance!");
     }
-
-    volkLoadInstance(instance);
 }
 
 void WindowManager::createSurface()
@@ -100,7 +97,7 @@ void WindowManager::setupDebugMessenger()
     }
 }
 
-VkResult WindowManager::CreateDebugUtilsMessengerEXT(const VkDebugUtilsMessengerCreateInfoEXT *pCreateInfo, const VkAllocationCallbacks *pAllocator)
+VkResult WindowManager::CreateDebugUtilsMessengerEXT(const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator)
 {
     auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
     if (func != nullptr) {
@@ -110,7 +107,7 @@ VkResult WindowManager::CreateDebugUtilsMessengerEXT(const VkDebugUtilsMessenger
     }
 }
 
-void WindowManager::DestroyDebugUtilsMessengerEXT(const VkAllocationCallbacks *pAllocator)
+void WindowManager::DestroyDebugUtilsMessengerEXT(const VkAllocationCallbacks* pAllocator)
 {
     auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
     if (func != nullptr) {
@@ -118,7 +115,7 @@ void WindowManager::DestroyDebugUtilsMessengerEXT(const VkAllocationCallbacks *p
     }
 }
 
-VkBool32 WindowManager::debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData, void *pUserData)
+VkBool32 WindowManager::debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData)
 {
 
     std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
@@ -126,7 +123,7 @@ VkBool32 WindowManager::debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT mes
     return VK_FALSE;
 }
 
-void WindowManager::key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
+void WindowManager::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_UNKNOWN)
         return; // Don't accept unknown keys
@@ -140,7 +137,7 @@ void WindowManager::key_callback(GLFWwindow *window, int key, int scancode, int 
     //     activate_airship();
 }
 
-void WindowManager::mouse_callback(GLFWwindow *window, double xpos, double ypos)
+void WindowManager::mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
     WindowManager::xpos = xpos;
     WindowManager::ypos = ypos;
@@ -172,7 +169,7 @@ bool WindowManager::checkValidationLayerSupport()
     return true;
 }
 
-void WindowManager::populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT &createInfo)
+void WindowManager::populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo)
 {
     createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
@@ -186,7 +183,7 @@ bool WindowManager::GetClose()
     return glfwWindowShouldClose(window);
 }
 
-std::vector<const char *> WindowManager::getRequiredExtensions()
+std::vector<const char*> WindowManager::getRequiredExtensions()
 {
     uint32_t glfwExtensionCount = 0;
     const char** glfwExtensions;

@@ -17,6 +17,12 @@ include(sample_helper)
 include(check_atomic)
 include(component_helper)
 
+# Use FindVulkan module added with CMAKE 3.7
+if (NOT CMAKE_VERSION VERSION_LESS 3.7.0)
+        message(STATUS "Using module to find Vulkan")
+        find_package(Vulkan)
+endif()
+
 # Add third party libraries
 add_subdirectory(../Vulkan-Samples/third_party third_party)
 
@@ -63,7 +69,7 @@ add_executable(${PROJECT_NAME} WIN32 ${FILES_SRC} ${FILES_SRC_MY})
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE glfw glm stb volk imgui)
+target_link_libraries(${PROJECT_NAME} PRIVATE glfw glm stb imgui ${Vulkan_LIBRARY})
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE NDEBUG)
 
