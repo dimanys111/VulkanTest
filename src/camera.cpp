@@ -4,7 +4,7 @@
 
 Camera::Camera(float width, float height)
 {
-
+    mouseSensitivity = 0.f;
     view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
     proj = glm::perspective(glm::radians(45.0f), width / (float)height, 0.1f, ViewDistance);
     proj[1][1] *= -1;

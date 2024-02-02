@@ -10,6 +10,8 @@ Game::Game(Device* device, Graphics* graphics)
 {
     this->device = device;
     this->graphics = graphics;
+
+    Init();
 }
 
 Game::~Game()

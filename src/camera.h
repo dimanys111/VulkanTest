@@ -28,6 +28,6 @@ private:
     float pitch;
     float mouseSensitivity;
     float lastX = 400, lastY = 300;
-    float firstMouse = true;
+    bool firstMouse = true;
     glm::vec2 moveDir;
 };

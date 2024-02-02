@@ -7,9 +7,10 @@
 
 GameObject::GameObject(Device* device, Camera* camera)
     : Entity(device, camera)
+    , applyLight(false)
     , size(1.0f)
+    , model(glm::mat4(1.0f))
 {
-    model = glm::mat4(1.0f);
 }
 
 GameObject::~GameObject() { }
@@ -22,9 +23,15 @@ void GameObject::Update(float deltaTime)
     updateUniformBuffer(deltaTime);
 }
 
-void GameObject::setVertex(std::vector<Vertex> vertices) { this->m_model->vertices = vertices; }
+void GameObject::setVertex(const std::vector<Vertex>& vertices)
+{
+    this->m_model->vertices = vertices;
+}
 
-void GameObject::setIndices(std::vector<uint16_t> indices) { this->m_model->indices = indices; }
+void GameObject::setIndices(const std::vector<uint16_t>& indices)
+{
+    this->m_model->indices = indices;
+}
 
 void GameObject::SetPosition(glm::vec3 position)
 {
@@ -49,7 +56,7 @@ glm::vec3 GameObject::GetPosition() { return position * 10.0f; }
 
 void GameObject::SetSize(glm::vec3 size) { this->size = size; }
 
-void GameObject::SetShadersName(std::string vertFile, std::string fragFile)
+void GameObject::SetShadersName(const std::string& vertFile, const std::string& fragFile)
 {
     this->vertFile = vertFile;
     this->fragFile = fragFile;
@@ -71,12 +78,6 @@ glm::vec3 GameObject::GetRotate() { return rotate * 10.0f; }
 
 void GameObject::updateUniformBuffer(float deltaTime)
 {
-    static auto startTime = std::chrono::high_resolution_clock::now();
-
-    auto currentTime = std::chrono::high_resolution_clock::now();
-    float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime)
-                     .count();
-
     UniformBufferObject ubo {};
     ubo.model = model;
     ubo.view = camera->view;

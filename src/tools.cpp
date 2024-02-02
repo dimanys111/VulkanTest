@@ -189,7 +189,7 @@ PrimitiveObject Tools::CreateSphere()
 
     float x, y, z, xy;
     float radius = 0.2f; // vertex position
-    float nx, ny, nz, lengthInv = 1.0f / radius; // vertex normal
+    float nx, ny, nz; // vertex normal
     float s, t; // vertex texCoord
 
     int stackCount = 20;
@@ -283,7 +283,6 @@ PrimitiveObject Tools::CreatePipe()
         for (int j = 0, k = 0; j <= sectorCount; ++j, k++) {
             float ux = pObject.vertices[k].pos.x;
             float uy = pObject.vertices[k].pos.y;
-            float uz = pObject.vertices[k].pos.z;
 
             pObject.vertices.push_back(
                 { { ux * radius, uy * radius, h }, { (float)j / sectorCount, t, t } });
@@ -297,8 +296,7 @@ PrimitiveObject Tools::CreatePipe()
 
     // put base and top vertices to arrays
     for (int i = 0; i < 2; ++i) {
-        float h = -height + i * height; // z value; -h/2 to h/2
-        float nz = -1 + i * 2; // z value of normal; -1 to 1
+        float h = -height + i * height; // z value; -h/2 to h/2z value of normal; -1 to 1
 
         pObject.vertices.push_back({ { 0, 0, h }, { 0.5f, 0.5f, 0.5f } });
 
@@ -368,7 +366,7 @@ PrimitiveObject Tools::CreateCapsule()
     float x, y, z, xy;
     float radius = 0.5f;
     float height = 0.5f; // vertex position
-    float nx, ny, nz, lengthInv = 1.0f / radius; // vertex normal
+    float nx, ny, nz; // vertex normal
     float s, t; // vertex texCoord
 
     int stackCount = 10;
@@ -410,7 +408,6 @@ PrimitiveObject Tools::CreateCapsule()
         for (int j = 0, k = 0; j <= sectorCount; ++j, k++) {
             float ux = pObject.vertices[pObject.vertices.size() - 1 - k].pos.x;
             float uy = pObject.vertices[pObject.vertices.size() - 1 - k].pos.y;
-            float uz = pObject.vertices[pObject.vertices.size() - 1 - k].pos.z;
 
             pObject.vertices.push_back({ { ux * radius * 10, uy * radius * 10, h },
                 { 1.0f, 1.0f, 1.0f }, { (float)j / sectorCount, t, t } });
@@ -516,9 +513,6 @@ PrimitiveObject Tools::MakeMCubes(size_t size, glm::vec3 pos)
 
     Gdata.clear();
 
-    double fx = size / 8.0f;
-    double fy = size / 8.0f;
-
     srand(234525);
 
     Gdata.resize(size + 1);
@@ -530,20 +524,13 @@ PrimitiveObject Tools::MakeMCubes(size_t size, glm::vec3 pos)
                 float val = 0;
                 float posx = (pos.x * 16) + x;
                 float posz = (pos.z * 16) + z;
-                // if(y > size / 2)
                 {
-                    // val = std::sin((posx) / 50 + (posz) / 50) * 10;
                     val = noise.accumulatedOctaveNoise2D(posx / 100, posz / 100, 8.0f) * 10 + 20;
                     if (val > (pos.y * 16) + y)
                         Gdata[x][y][z] = val;
                     else
                         Gdata[x][y][z] = 0;
                 }
-                // else if( y <= size / 2)
-                // {
-                //     val = noise.noise(x, y, z);
-                //     Gdata[x][y][z] = (1 + val) - y ;
-                // }
             }
         }
     }
@@ -633,7 +620,7 @@ glm::vec3 Tools::GetPos(int x, int y, int z, int i)
 
 void Tools::Polygonise(int x, int y, int z, double isolevel, PrimitiveObject* pObject)
 {
-    glm::vec3* vertlist = new glm::vec3[12];
+    glm::vec3 vertlist[12];
     int i, ntriang = 0;
     int cubeindex = 0;
 
@@ -656,8 +643,9 @@ void Tools::Polygonise(int x, int y, int z, double isolevel, PrimitiveObject* pO
         cubeindex |= 128;
 
     /* Cube is entirely in/out of the surface */
-    if (_edgeTable[cubeindex] == 0)
+    if (_edgeTable[cubeindex] == 0) {
         return;
+    }
 
     // Ищем конкретные положения вершин, используя линейную интерполяцию
     /* Find the vertices where the surface intersects the cube */

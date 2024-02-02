@@ -84,7 +84,7 @@ void Entity::LoadModel(std::string filepath)
 
 void Entity::createTextureImage(std::string filepath)
 {
-    int texWidth, texHeight, texChannels;
+    int texWidth = 0, texHeight = 0, texChannels;
     stbi_uc* pixels
         = stbi_load(filepath.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
     VkDeviceSize imageSize = texWidth * texHeight * 4;

@@ -48,7 +48,6 @@ void Engine::Init()
     graphics = new Graphics(window, device, swapchain);
 
     game = new Game(device, graphics);
-    game->Init();
 
     GUIInit();
 
