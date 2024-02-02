@@ -2,13 +2,12 @@
 
 #include "stdinclude.h"
 
-#include "gameObject.h"
-#include "skyBox.h"
-
-#include "dirLight.h"
-
-#include "device.h"
-#include "graphics.h"
+class Device;
+class Graphics;
+class GameObject;
+class DirLight;
+class SkyBox;
+class Camera;
 
 class Game {
 public:

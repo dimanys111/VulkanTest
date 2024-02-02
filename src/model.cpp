@@ -1,4 +1,6 @@
 #include "model.h"
+#include "device.h"
+#include "tools.h"
 
 Model::Model(Device* device) { this->device = device; }
 

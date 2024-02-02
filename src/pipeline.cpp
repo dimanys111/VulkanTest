@@ -1,4 +1,6 @@
 #include "pipeline.h"
+#include "device.h"
+#include "resource.h"
 #include "tools.h"
 
 Pipeline::Pipeline(Device* device) { this->device = device; }

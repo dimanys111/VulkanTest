@@ -1,21 +1,21 @@
 #pragma once
 
+#define GLFW_INCLUDE_VULKAN
+#include "GLFW/glfw3.h"
+#include <algorithm>
 #include <array>
 #include <chrono>
+#include <cstring>
 #include <fstream>
+#include <glm/gtx/rotate_vector.hpp>
 #include <iostream>
 #include <optional>
+#include <ostream>
 #include <set>
-
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
-
-#include <glm/gtx/rotate_vector.hpp>
-
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_vulkan.h"
-
-#include "obj_loader/tiny_obj_loader.h"
+#include <stdexcept>
+#include <string>
+#include <vector>
+#include <vulkan/vulkan.h>
 
 const uint32_t WIDTH = 800;
 const uint32_t HEIGHT = 600;

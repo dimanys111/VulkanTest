@@ -2,7 +2,7 @@
 
 #include "stdinclude.h"
 
-#include "resource.h"
+class Device;
 
 class WindowManager {
 public:

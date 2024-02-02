@@ -2,7 +2,7 @@
 
 #include "stdinclude.h"
 
-#include "device.h"
+class Device;
 
 class Pipeline {
 

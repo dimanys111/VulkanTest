@@ -1,11 +1,9 @@
 #pragma once
 
-#include "device.h"
 #include "stdinclude.h"
-#include "window.h"
 
-#include "resource.h"
-#include "tools.h"
+class Device;
+class WindowManager;
 
 class SwapChain {
 public:

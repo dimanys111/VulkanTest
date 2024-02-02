@@ -1,10 +1,11 @@
 #pragma once
 
-#include "camera.h"
-#include "device.h"
+#include "stdinclude.h"
 
-#include "model.h"
-#include "pipeline.h"
+class Device;
+class Camera;
+class Model;
+class Pipeline;
 
 class Entity {
 public:

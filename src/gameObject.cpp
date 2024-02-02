@@ -1,4 +1,9 @@
 #include "gameObject.h"
+#include "camera.h"
+#include "device.h"
+#include "model.h"
+#include "pipeline.h"
+#include "resource.h"
 
 GameObject::GameObject(Device* device, Camera* camera)
     : Entity(device, camera)

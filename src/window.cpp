@@ -1,4 +1,5 @@
 #include "window.h"
+#include "resource.h"
 
 WindowManager::WindowManager() { }
 

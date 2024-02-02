@@ -2,15 +2,11 @@
 
 #include "stdinclude.h"
 
-#include "resource.h"
-
-#include "device.h"
-#include "renderer.h"
-#include "swapchain.h"
-#include "tools.h"
-#include "window.h"
-
-#include "gameObject.h"
+class Device;
+class GameObject;
+class Renderer;
+class SwapChain;
+class WindowManager;
 
 class Graphics {
 public:

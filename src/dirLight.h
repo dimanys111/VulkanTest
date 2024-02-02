@@ -1,13 +1,9 @@
 #pragma once
 
 #include "stdinclude.h"
-
-#include "camera.h"
-
-#include "tools.h"
-
-#include "gameObject.h"
-#include "resource.h"
+class Camera;
+class Device;
+class GameObject;
 
 class DirLight {
 public:

@@ -1,5 +1,9 @@
 #include "entity.h"
-#include "stdinclude.h"
+#include "device.h"
+#include "model.h"
+#include "obj_loader/tiny_obj_loader.h"
+#include "pipeline.h"
+#include "tools.h"
 
 #define STB_IMAGE_IMPLEMENTATION // use of stb functions once and for all
 #include "stb_image.h"

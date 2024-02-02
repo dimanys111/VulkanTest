@@ -1,4 +1,5 @@
 #include "device.h"
+#include "window.h"
 
 Device::Device(WindowManager* window) { this->window = window; }
 

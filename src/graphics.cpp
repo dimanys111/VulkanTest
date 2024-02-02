@@ -1,4 +1,11 @@
 #include "graphics.h"
+#include "device.h"
+#include "gameObject.h"
+#include "pipeline.h"
+#include "renderer.h"
+#include "resource.h"
+#include "swapchain.h"
+#include "tools.h"
 
 Graphics::Graphics(WindowManager* window, Device* device, SwapChain* swapchain)
 {

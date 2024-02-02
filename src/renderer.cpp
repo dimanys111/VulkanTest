@@ -1,4 +1,7 @@
 #include "renderer.h"
+#include "device.h"
+#include "pipeline.h"
+#include "resource.h"
 
 Renderer::Renderer(Device* device)
 {

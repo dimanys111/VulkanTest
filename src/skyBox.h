@@ -2,10 +2,9 @@
 
 #include "stdinclude.h"
 
-#include "device.h"
-
-#include "camera.h"
-#include "gameObject.h"
+class Device;
+class Camera;
+class GameObject;
 
 class SkyBox {
 public:

@@ -1,4 +1,10 @@
 #include "game.h"
+#include "camera.h"
+#include "dirLight.h"
+#include "gameObject.h"
+#include "graphics.h"
+#include "resource.h"
+#include "skyBox.h"
 
 Game::Game(Device* device, Graphics* graphics)
 {

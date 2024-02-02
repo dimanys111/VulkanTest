@@ -1,7 +1,8 @@
 #pragma once
 
 #include "stdinclude.h"
-#include "window.h"
+
+class WindowManager;
 
 class Device {
 public:

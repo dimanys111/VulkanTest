@@ -1,4 +1,7 @@
 #include "tools.h"
+#include "SimplexNoise.h"
+#include "device.h"
+#include "resource.h"
 
 Tools::Tools(Device* device) { this->device = device; }
 

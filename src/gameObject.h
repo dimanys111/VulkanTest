@@ -1,11 +1,10 @@
 #pragma once
 
+#include "entity.h"
 #include "stdinclude.h"
 
-#include "camera.h"
-#include "device.h"
-#include "entity.h"
-#include "resource.h"
+class Device;
+class Camera;
 
 class GameObject : public Entity {
 public:

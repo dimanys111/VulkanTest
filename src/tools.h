@@ -1,9 +1,8 @@
 #pragma once
 
-#include "device.h"
-#include "resource.h"
+#include "stdinclude.h"
 
-#include "SimplexNoise.h"
+class Device;
 
 struct PrimitiveObject {
     std::vector<Vertex> vertices;

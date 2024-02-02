@@ -1,4 +1,8 @@
 #include "swapchain.h"
+#include "device.h"
+#include "resource.h"
+#include "tools.h"
+#include "window.h"
 
 SwapChain::SwapChain(WindowManager* window, Device* device)
 {

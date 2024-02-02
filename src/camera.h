@@ -7,7 +7,7 @@ public:
     Camera(float width, float height);
     ~Camera();
 
-    void processMouse(float xpos, float ypos, GLboolean constrainPitch = true);
+    void processMouse(float xpos, float ypos);
 
     void Update(float deltaTime);
 

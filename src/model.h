@@ -2,8 +2,7 @@
 
 #include "stdinclude.h"
 
-#include "device.h"
-#include "tools.h"
+class Device;
 
 class Model {
 public:

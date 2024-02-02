@@ -15,7 +15,7 @@ Camera::Camera(float width, float height)
 
 Camera::~Camera() { }
 
-void Camera::processMouse(float xpos, float ypos, GLboolean constrainPitch)
+void Camera::processMouse(float xpos, float ypos)
 {
 
     if (firstMouse) {

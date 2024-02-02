@@ -53,6 +53,8 @@ set(FILES_SRC_MY
     src/pipeline.h
     src/renderer.cpp
     src/renderer.h
+    src/resource.h
+    src/SimplexNoise.h
     src/skyBox.cpp
     src/skyBox.h
     src/swapchain.cpp

@@ -1,4 +1,6 @@
 #include "skyBox.h"
+#include "camera.h"
+#include "gameObject.h"
 
 SkyBox::SkyBox(Device* device, Camera* camera, ShadersPath paths)
 {

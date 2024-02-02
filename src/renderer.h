@@ -2,11 +2,8 @@
 
 #include "stdinclude.h"
 
-#include "device.h"
-
-#include "resource.h"
-
-#include "pipeline.h"
+class Device;
+class Pipeline;
 
 class Renderer {
 public:

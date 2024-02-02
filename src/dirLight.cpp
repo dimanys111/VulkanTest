@@ -1,4 +1,7 @@
 #include "dirLight.h"
+#include "gameObject.h"
+#include "resource.h"
+#include "tools.h"
 
 DirLight::DirLight(Device* device, Camera* camera, ShadersPath paths)
 {

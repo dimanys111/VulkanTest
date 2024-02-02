@@ -1,14 +1,13 @@
 #pragma once
 
-#include "device.h"
-#include "graphics.h"
 #include "stdinclude.h"
-#include "swapchain.h"
-#include "window.h"
 
-#include "game.h"
-
-#include "resource.h"
+class WindowManager;
+class Device;
+class SwapChain;
+class Graphics;
+class DeviceVkSemaphore;
+class Game;
 
 class Engine {
 public:
