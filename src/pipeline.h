@@ -21,6 +21,8 @@ public:
     void createDescriptorSets();
 
     void createUniformBuffers();
+    void createGraphicsPipeline(
+        std::string vertFile, std::string fragFile, const VkRenderPass& renderPass);
 
     Device* device = NULL;
 
@@ -39,4 +41,7 @@ public:
     VkFrontFace face = VK_FRONT_FACE_CLOCKWISE;
 
     std::vector<VkDescriptorSet> descriptorSets;
+
+private:
+    VkShaderModule createShaderModule(const std::vector<char>& code);
 };

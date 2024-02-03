@@ -6,16 +6,7 @@ project(vulkan_test LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Add path for local cmake scripts
-list(APPEND CMAKE_MODULE_PATH
-    ${CMAKE_CURRENT_SOURCE_DIR}/bldsys/cmake
-    ${CMAKE_CURRENT_SOURCE_DIR}/bldsys/cmake/module)
-
-include(utils)
-include(global_options)
-include(sample_helper)
-include(check_atomic)
-include(component_helper)
+set(VKB_WSI_SELECTION "XCB" CACHE STRING "Select WSI target (XCB, XLIB, WAYLAND, D2D)")
 
 # Use FindVulkan module added with CMAKE 3.7
 if (NOT CMAKE_VERSION VERSION_LESS 3.7.0)

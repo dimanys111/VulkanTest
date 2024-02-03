@@ -38,7 +38,7 @@ void Graphics::Init()
     createDepthResources();
     createFramebuffers();
     for (auto go : gameObjects) {
-        renderer->createGraphicsPipeline(go->vertFile, go->fragFile, go->pipeline);
+        go->pipeline->createGraphicsPipeline(go->vertFile, go->fragFile, renderer->renderPass);
     }
     createCommandBuffers();
 }
