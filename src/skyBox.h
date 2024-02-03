@@ -8,17 +8,17 @@ class GameObject;
 
 class SkyBox {
 public:
-    SkyBox(Device* device, Camera* camera, ShadersPath paths);
+    SkyBox(Device* device, Camera* camera, const ShadersPath& paths);
     ~SkyBox();
 
     void Update(float deltaTime);
 
-    std::vector<Vertex> vertices;
-    std::vector<uint16_t> indices;
-
     glm::vec3 colorTop;
     glm::vec3 colorBottom;
 
+    std::vector<Vertex> vertices;
+    std::vector<uint16_t> indices;
+
     GameObject* go;
-    Camera* camera;
+    Camera* m_camera;
 };

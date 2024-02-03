@@ -56,13 +56,10 @@ private:
     Game* game;
 
     float v[3];
-    float p[3];
 
     bool menuSwaped = false;
 
-    bool show = true, show_another_window;
-
-    float clear_color;
+    bool show = true;
 
     VkDescriptorPool imguiPool;
 };

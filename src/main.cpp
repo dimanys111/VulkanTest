@@ -4,8 +4,6 @@ int main()
 {
     Engine* engine = new Engine();
 
-    engine->Init();
-
     try {
         engine->Run();
     } catch (const std::exception& e) {

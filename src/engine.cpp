@@ -10,7 +10,7 @@
 #include "tools.h"
 #include "window.h"
 
-Engine::Engine() { }
+Engine::Engine() { Init(); }
 
 Engine::~Engine()
 {
@@ -103,7 +103,7 @@ void Engine::GUIInit()
     vkCreateDescriptorPool(device->device, &pool_info, nullptr, &imguiPool);
 
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
+    const ImGuiIO& io = ImGui::GetIO();
     (void)io;
     // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable
     // Keyboard Controls io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad; //
@@ -171,9 +171,6 @@ void Engine::draw()
     ImGui::NewFrame();
 
     {
-        static float f = 0.0f;
-        static int counter = 0;
-
         ImGui::Begin("Hello, world!"); // Create a window called "Hello, world!" and
                                        // append into it.
 

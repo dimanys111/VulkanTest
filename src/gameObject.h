@@ -14,9 +14,9 @@ public:
 
     void Update(float deltaTime);
 
-    void setVertex(const std::vector<Vertex> &vertices);
+    void setVertex(const std::vector<Vertex>& vertices);
 
-    void setIndices(const std::vector<uint16_t> &indices);
+    void setIndices(const std::vector<uint16_t>& indices);
 
     void SetPosition(glm::vec3 position);
 
@@ -26,7 +26,7 @@ public:
 
     void SetSize(glm::vec3 size);
 
-    void SetShadersName(const std::string &vertFile, const std::string &fragFile);
+    void SetShadersName(const std::string& vertFile, const std::string& fragFile);
 
     void SetRotation(glm::vec3 rotation);
 
