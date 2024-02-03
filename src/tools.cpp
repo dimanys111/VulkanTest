@@ -325,10 +325,6 @@ inline std::vector<std::vector<int>> Tools::_triTable
           { 0, 3, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
           { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 } };
 
-Tools::Tools(Device* device) { this->device = device; }
-
-Tools::~Tools() { }
-
 VkImageView Tools::createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags)
 {
     VkImageViewCreateInfo viewInfo {};
@@ -509,31 +505,29 @@ PrimitiveObject Tools::CreateSphere()
 {
     PrimitiveObject pObject;
 
-    float x, y, z, xy;
     float radius = 0.2f; // vertex position
-    float nx, ny, nz; // vertex normal
+
     float s, t; // vertex texCoord
 
     int stackCount = 20;
     int sectorCount = 20;
     float sectorStep = 2 * M_PI / sectorCount;
     float stackStep = M_PI / stackCount;
-    float sectorAngle, stackAngle;
 
     for (int i = 0; i <= stackCount; ++i) {
-        stackAngle = M_PI / 2 - i * stackStep; // starting from pi/2 to -pi/2
-        xy = radius * cosf(stackAngle); // r * cos(u)
-        z = radius * sinf(stackAngle); // r * sin(u)
+        float stackAngle = M_PI / 2 - i * stackStep; // starting from pi/2 to -pi/2
+        float xy = radius * cosf(stackAngle); // r * cos(u)
+        float z = radius * sinf(stackAngle); // r * sin(u)
 
         // add (sectorCount+1) vertices per stack
         // the first and last vertices have same position and normal, but different
         // tex coords
         for (int j = 0; j <= sectorCount; ++j) {
-            sectorAngle = j * sectorStep; // starting from 0 to 2pi
+            float sectorAngle = j * sectorStep; // starting from 0 to 2pi
 
             // vertex position (x, y, z)
-            x = xy * cosf(sectorAngle); // r * cos(u) * cos(v)
-            y = xy * sinf(sectorAngle); // r * cos(u) * sin(v)
+            float x = xy * cosf(sectorAngle); // r * cos(u) * cos(v)
+            float y = xy * sinf(sectorAngle); // r * cos(u) * sin(v)
 
             // vertex tex coord (s, t) range between [0, 1]
             s = (float)j / sectorCount;
@@ -543,10 +537,9 @@ PrimitiveObject Tools::CreateSphere()
         }
     }
 
-    int k1, k2;
     for (int i = 0; i < stackCount; ++i) {
-        k1 = i * (sectorCount + 1); // beginning of current stack
-        k2 = k1 + sectorCount + 1; // beginning of next stack
+        int k1 = i * (sectorCount + 1); // beginning of current stack
+        int k2 = k1 + sectorCount + 1; // beginning of next stack
 
         for (int j = 0; j < sectorCount; ++j, ++k1, ++k2) {
             // 2 triangles per sector excluding first and last stacks
@@ -574,11 +567,9 @@ PrimitiveObject Tools::GetUnitForCilinder(int sectCount)
     PrimitiveObject pObject;
 
     float sectorStep = 2 * M_PI / sectCount;
-    float sectorAngle; // radian
 
-    std::vector<float> unitCircleVertices;
     for (int i = 0; i <= sectCount; ++i) {
-        sectorAngle = i * sectorStep;
+        float sectorAngle = i * sectorStep;
         pObject.vertices.push_back({ { cos(sectorAngle), sin(sectorAngle), 0 },
             { cos(sectorAngle), sin(sectorAngle), 1.0f } });
     }
@@ -688,7 +679,7 @@ PrimitiveObject Tools::CreateCapsule()
     float x, y, z, xy;
     float radius = 0.5f;
     float height = 0.5f; // vertex position
-    float nx, ny, nz; // vertex normal
+
     float s, t; // vertex texCoord
 
     int stackCount = 10;
@@ -725,14 +716,14 @@ PrimitiveObject Tools::CreateCapsule()
     // put side vertices to arrays
     for (int i = 0; i < 2; ++i) {
         float h = -height + i * height; // z value; -h/2 to h/2
-        float t = 1.0f - i; // vertical tex coord; 1 to 0
+        float t1 = 1.0f - i; // vertical tex coord; 1 to 0
 
         for (int j = 0, k = 0; j <= sectorCount; ++j, k++) {
             float ux = pObject.vertices[pObject.vertices.size() - 1 - k].pos.x;
             float uy = pObject.vertices[pObject.vertices.size() - 1 - k].pos.y;
 
             pObject.vertices.push_back({ { ux * radius * 10, uy * radius * 10, h },
-                { 1.0f, 1.0f, 1.0f }, { (float)j / sectorCount, t, t } });
+                { 1.0f, 1.0f, 1.0f }, { (float)j / sectorCount, t1, t1 } });
         }
     }
 
@@ -777,11 +768,9 @@ PrimitiveObject Tools::CreateCapsule()
             }
 
             // k1+1 => k2 => k2+1
-            if (i != (stackCount / 2 - 1)) {
-                pObject.indices.push_back(k2 + 1);
-                pObject.indices.push_back(k2);
-                pObject.indices.push_back(k1 + 1);
-            }
+            pObject.indices.push_back(k2 + 1);
+            pObject.indices.push_back(k2);
+            pObject.indices.push_back(k1 + 1);
         }
     }
 
@@ -843,16 +832,14 @@ PrimitiveObject Tools::MakeMCubes(size_t size, glm::vec3 pos)
         for (int y = 0; y < size + 1; y++) {
             Gdata[x][y].resize(size + 1);
             for (int z = 0; z < size + 1; z++) {
-                float val = 0;
                 float posx = (pos.x * 16) + x;
                 float posz = (pos.z * 16) + z;
-                {
-                    val = noise.accumulatedOctaveNoise2D(posx / 100, posz / 100, 8.0f) * 10 + 20;
-                    if (val > (pos.y * 16) + y)
-                        Gdata[x][y][z] = val;
-                    else
-                        Gdata[x][y][z] = 0;
-                }
+
+                float val = noise.accumulatedOctaveNoise2D(posx / 100, posz / 100, 8.0f) * 10 + 20;
+                if (val > (pos.y * 16) + y)
+                    Gdata[x][y][z] = val;
+                else
+                    Gdata[x][y][z] = 0;
             }
         }
     }
@@ -1039,8 +1026,8 @@ void Tools::Polygonise(int x, int y, int z, double isolevel, PrimitiveObject* pO
     if (ntriang > 0) {
         int size = pObject->vertices.size() - 1;
 
-        for (int i = 0; i < ntriang; i++) {
-            int step = i * 3;
+        for (int j = 0; j < ntriang; j++) {
+            int step = j * 3;
             pObject->indices.push_back(size - step - 2);
             pObject->indices.push_back(size - step - 1);
             pObject->indices.push_back(size - step);

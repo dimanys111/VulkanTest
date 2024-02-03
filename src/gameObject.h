@@ -8,9 +8,9 @@ class Camera;
 
 class GameObject : public Entity {
 public:
-    GameObject(Device* device, Camera* camera);
+    GameObject(std::shared_ptr<Device> device, std::shared_ptr<Camera> camera);
     ~GameObject();
-    void Init();
+    void Init() override;
 
     void Update(float deltaTime);
 

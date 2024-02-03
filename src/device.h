@@ -6,10 +6,9 @@ class WindowManager;
 
 class Device {
 public:
-    Device(WindowManager* window);
-    ;
+    explicit Device(std::shared_ptr<WindowManager> window);
+
     ~Device();
-    ;
 
     void Init();
 
@@ -35,5 +34,5 @@ public:
 
     uint32_t g_QueueFamily;
 
-    WindowManager* window;
+    std::shared_ptr<WindowManager> window;
 };

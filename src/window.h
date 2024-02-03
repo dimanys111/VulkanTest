@@ -4,6 +4,10 @@
 
 class Device;
 
+struct DestroyGlfwWin {
+    void operator()(GLFWwindow* ptr) { glfwDestroyWindow(ptr); }
+};
+
 class WindowManager {
 public:
     WindowManager();

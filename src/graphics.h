@@ -10,10 +10,11 @@ class WindowManager;
 
 class Graphics {
 public:
-    Graphics(WindowManager* window, Device* device, SwapChain* swapchain);
+    Graphics(std::shared_ptr<WindowManager> window, std::shared_ptr<Device> device,
+        std::shared_ptr<SwapChain> swapchain);
     ~Graphics();
 
-    void SetGameObject(GameObject* go);
+    void SetGameObject(std::shared_ptr<GameObject> go);
 
     void Init();
 
@@ -29,12 +30,12 @@ public:
 
     std::vector<VkFramebuffer> swapChainFramebuffers;
 
-    WindowManager* window;
-    Device* device;
-    SwapChain* swapchain;
-    Renderer* renderer;
+    std::shared_ptr<WindowManager> window;
+    std::shared_ptr<Device> device;
+    std::shared_ptr<SwapChain> swapchain;
+    std::shared_ptr<Renderer> renderer;
 
-    std::vector<GameObject*> gameObjects;
+    std::vector<std::shared_ptr<GameObject>> gameObjects;
 
     VkImage depthImage;
     VkDeviceMemory depthImageMemory;

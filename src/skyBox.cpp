@@ -2,7 +2,8 @@
 #include "camera.h"
 #include "gameObject.h"
 
-SkyBox::SkyBox(Device* device, Camera* camera, const ShadersPath& paths)
+SkyBox::SkyBox(
+    std::shared_ptr<Device> device, std::shared_ptr<Camera> camera_, const ShadersPath& paths)
     : colorBottom({ 0.0f, 0.0f, 0.1f })
     , colorTop({ 0.1f, 0.1f, 1.0f })
     , vertices({
@@ -39,9 +40,9 @@ SkyBox::SkyBox(Device* device, Camera* camera, const ShadersPath& paths)
       })
     , indices({ 0, 1, 2, 2, 3, 0, 6, 5, 4, 4, 7, 6, 10, 9, 8, 8, 11, 10, 12, 13, 14, 14, 15, 12, 16,
           17, 18, 18, 19, 16, 22, 21, 20, 20, 23, 22 })
-    , m_camera(camera)
+    , camera(camera_)
 {
-    go = new GameObject(device, camera);
+    go = std::make_shared<GameObject>(device, camera);
     go->SetShadersName(paths.vertShader, paths.fragShader);
     float size = Camera::ViewDistance / 2;
     go->SetSize(glm::vec3(size, size, size));
@@ -50,11 +51,11 @@ SkyBox::SkyBox(Device* device, Camera* camera, const ShadersPath& paths)
     go->Init();
 }
 
-SkyBox::~SkyBox() { delete go; }
+SkyBox::~SkyBox() { }
 
 void SkyBox::Update(float deltaTime)
 {
-    glm::vec3 pos = m_camera->GetPosition();
+    glm::vec3 pos = camera->GetPosition();
     go->SetPosition(pos);
     go->Update(deltaTime);
 }

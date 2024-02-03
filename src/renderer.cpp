@@ -3,7 +3,7 @@
 #include "pipeline.h"
 #include "resource.h"
 
-Renderer::Renderer(Device* device)
+Renderer::Renderer(std::shared_ptr<Device> device)
 {
     this->device = device;
     createRenderPass();

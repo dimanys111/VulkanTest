@@ -11,7 +11,7 @@ class Camera;
 
 class Game {
 public:
-    Game(Device* device, Graphics* graphics);
+    Game(std::shared_ptr<Device> device, std::shared_ptr<Graphics> graphics);
     ~Game();
     void Init();
 
@@ -19,17 +19,17 @@ public:
 
     void Draw(VkCommandBuffer cmd, int indx);
 
-    Graphics* graphics;
+    std::shared_ptr<Graphics> graphics;
 
-    SkyBox* skyBox;
+    std::shared_ptr<SkyBox> skyBox;
 
-    Camera* camera;
+    std::shared_ptr<Camera> camera;
 
-    GameObject* gameObject;
+    std::shared_ptr<GameObject> gameObject;
 
-    DirLight* dirLight;
+    std::shared_ptr<DirLight> dirLight;
 
-    Device* device;
+    std::shared_ptr<Device> device;
 
     std::vector<std::vector<std::vector<GameObject*>>> chunks;
 };

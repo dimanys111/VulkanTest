@@ -7,7 +7,7 @@ class Pipeline;
 
 class Renderer {
 public:
-    Renderer(Device* device);
+    explicit Renderer(std::shared_ptr<Device> device);
     ~Renderer();
 
     void createCommandPool();
@@ -21,5 +21,5 @@ public:
 
     VkRenderPass renderPass;
 
-    Device* device;
+    std::shared_ptr<Device> device;
 };

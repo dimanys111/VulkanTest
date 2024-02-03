@@ -7,19 +7,18 @@
 #include "swapchain.h"
 #include "tools.h"
 
-Graphics::Graphics(WindowManager* window, Device* device, SwapChain* swapchain)
+Graphics::Graphics(std::shared_ptr<WindowManager> window, std::shared_ptr<Device> device,
+    std::shared_ptr<SwapChain> swapchain)
 {
     this->window = window;
     this->device = device;
     this->swapchain = swapchain;
 
-    renderer = new Renderer(device);
+    renderer = std::make_shared<Renderer>(this->device);
 }
 
 Graphics::~Graphics()
 {
-
-    delete renderer;
 
     vkDestroyImageView(device->device, depthImageView, nullptr);
 
@@ -31,13 +30,13 @@ Graphics::~Graphics()
     }
 }
 
-void Graphics::SetGameObject(GameObject* go) { gameObjects.push_back(go); }
+void Graphics::SetGameObject(std::shared_ptr<GameObject> go) { gameObjects.push_back(go); }
 
 void Graphics::Init()
 {
     createDepthResources();
     createFramebuffers();
-    for (auto go : gameObjects) {
+    for (const auto& go : gameObjects) {
         go->pipeline->createGraphicsPipeline(go->vertFile, go->fragFile, renderer->renderPass);
     }
     createCommandBuffers();
@@ -119,7 +118,7 @@ void Graphics::setCommandBuffers()
         renderPassInfo.pClearValues = clearValues.data();
         vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-        for (auto go : gameObjects) {
+        for (const auto& go : gameObjects) {
             vkCmdBindPipeline(
                 commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, go->pipeline->graphicsPipeline);
 

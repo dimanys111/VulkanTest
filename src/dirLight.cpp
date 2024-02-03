@@ -3,7 +3,9 @@
 #include "resource.h"
 #include "tools.h"
 
-DirLight::DirLight(Device* device, Camera* camera, ShadersPath paths)
+DirLight::DirLight(
+    std::shared_ptr<Device> device, std::shared_ptr<Camera> camera, const ShadersPath& paths)
+    : angle(0.f)
 {
     this->camera = camera;
 
@@ -13,7 +15,7 @@ DirLight::DirLight(Device* device, Camera* camera, ShadersPath paths)
     pObject.vertices[2].color = Vertex::ColorGet(76, 60, 24);
     pObject.vertices[3].color = Vertex::ColorGet(76, 60, 24);
 
-    go = new GameObject(device, camera);
+    go = std::make_shared<GameObject>(device, camera);
 
     go->SetShadersName(paths.vertShader, paths.fragShader);
     go->setVertex(pObject.vertices);
@@ -25,7 +27,7 @@ DirLight::DirLight(Device* device, Camera* camera, ShadersPath paths)
     Resource::sunDir = glm::vec3(1, -1, 1);
 }
 
-DirLight::~DirLight() { delete go; }
+DirLight::~DirLight() { }
 
 void DirLight::Update(float deltaTime)
 {

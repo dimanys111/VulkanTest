@@ -1,7 +1,11 @@
 #include "device.h"
 #include "window.h"
 
-Device::Device(WindowManager* window) { this->window = window; }
+Device::Device(std::shared_ptr<WindowManager> window)
+{
+    this->window = window;
+    Init();
+}
 
 Device::~Device() { vkDestroyDevice(device, nullptr); }
 
@@ -24,11 +28,10 @@ void Device::pickPhysicalDevice()
     std::vector<VkPhysicalDevice> devices(deviceCount);
     vkEnumeratePhysicalDevices(window->instance, &deviceCount, devices.data());
 
-    for (const auto& device : devices) {
-        if (isDeviceSuitable(device)) {
-            physicalDevice = device;
-            break;
-        }
+    if (auto it = std::find_if(devices.cbegin(), devices.cend(),
+            [&](const auto& device) { return isDeviceSuitable(device); });
+        it != devices.cend()) {
+        physicalDevice = *it;
     }
 
     if (physicalDevice == VK_NULL_HANDLE) {
@@ -75,12 +78,12 @@ void Device::createLogicalDevice()
         = { indices.graphicsFamily.value(), indices.presentFamily.value() };
 
     for (uint32_t queueFamily : uniqueQueueFamilies) {
-        VkDeviceQueueCreateInfo queueCreateInfo {};
-        queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-        queueCreateInfo.queueFamilyIndex = queueFamily;
-        queueCreateInfo.queueCount = 1;
-        queueCreateInfo.pQueuePriorities = &queuePriority;
-        queueCreateInfos.push_back(queueCreateInfo);
+        VkDeviceQueueCreateInfo queueCreateInfo_ {};
+        queueCreateInfo_.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+        queueCreateInfo_.queueFamilyIndex = queueFamily;
+        queueCreateInfo_.queueCount = 1;
+        queueCreateInfo_.pQueuePriorities = &queuePriority;
+        queueCreateInfos.push_back(queueCreateInfo_);
     }
 
     createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());

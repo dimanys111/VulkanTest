@@ -9,17 +9,17 @@ class Pipeline;
 
 class Entity {
 public:
-    Entity(Device* device, Camera* camera);
+    Entity(std::shared_ptr<Device> device, std::shared_ptr<Camera> camera);
     ~Entity();
     virtual void Init();
 
     void SetFrontFace(VkFrontFace face);
 
-    void LoadTexture(std::string filepath);
+    void LoadTexture(const std::string &filepath);
 
-    void LoadModel(std::string filepath);
+    void LoadModel(const std::string &filepath);
 
-    void createTextureImage(std::string filepath);
+    void createTextureImage(const std::string &filepath);
 
     void createTextureImageView();
 
@@ -28,17 +28,15 @@ public:
 
     void Draw(VkCommandBuffer commandBuffer, int i);
 
-    Device* device;
-    Camera* camera;
+    std::shared_ptr<Device> device;
+    std::shared_ptr<Camera> camera;
 
-    Model* m_model;
+    std::shared_ptr<Model> modelObj;
 
-    Pipeline* pipeline;
+    std::shared_ptr<Pipeline> pipeline;
 
     VkImage textureImage = VK_NULL_HANDLE;
     VkDeviceMemory textureImageMemory;
-
-    float direction, speed;
 
     glm::vec3 position;
 };

@@ -19,9 +19,6 @@ enum PrimitiveType {
 
 class Tools {
 public:
-    Tools(Device* device);
-    ~Tools();
-
     static VkImageView createImageView(
         VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
 
@@ -44,7 +41,7 @@ public:
 
     static PrimitiveObject GetMCubes(glm::vec3 pos);
 
-    inline static Device* device;
+    inline static std::shared_ptr<Device> device;
 
     static std::vector<char> readFile(const std::string& filename);
 

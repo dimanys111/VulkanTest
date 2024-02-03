@@ -21,10 +21,10 @@ public:
     void GUIInit();
 
 private:
-    WindowManager* window;
-    Device* device;
-    SwapChain* swapchain;
-    Graphics* graphics;
+    std::shared_ptr<WindowManager> window;
+    std::shared_ptr<Device> device;
+    std::shared_ptr<SwapChain> swapchain;
+    std::shared_ptr<Graphics> graphics;
 
     std::vector<VkSemaphore> imageAvailableSemaphores;
     std::vector<VkSemaphore> renderFinishedSemaphores;
@@ -43,8 +43,6 @@ private:
 
     void FramePresent(uint32_t imageIndex);
 
-    void drawFrame();
-
     void createSyncObjects();
 
     VkPipelineCache g_PipelineCache = VK_NULL_HANDLE;
@@ -53,7 +51,7 @@ private:
 
     bool g_SwapChainRebuild = false;
 
-    Game* game;
+    std::shared_ptr<Game> game;
 
     float v[3];
 

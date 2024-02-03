@@ -5,7 +5,7 @@
 #include "pipeline.h"
 #include "resource.h"
 
-GameObject::GameObject(Device* device, Camera* camera)
+GameObject::GameObject(std::shared_ptr<Device> device, std::shared_ptr<Camera> camera)
     : Entity(device, camera)
     , applyLight(false)
     , size(1.0f)
@@ -25,12 +25,12 @@ void GameObject::Update(float deltaTime)
 
 void GameObject::setVertex(const std::vector<Vertex>& vertices)
 {
-    this->m_model->vertices = vertices;
+    this->modelObj->vertices = vertices;
 }
 
 void GameObject::setIndices(const std::vector<uint16_t>& indices)
 {
-    this->m_model->indices = indices;
+    this->modelObj->indices = indices;
 }
 
 void GameObject::SetPosition(glm::vec3 position)

@@ -1,7 +1,7 @@
 #include "window.h"
 #include "resource.h"
 
-WindowManager::WindowManager() { }
+WindowManager::WindowManager() { Init(); }
 
 WindowManager::~WindowManager()
 {
@@ -53,7 +53,6 @@ void WindowManager::createInstance()
     createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     createInfo.pApplicationInfo = &appInfo;
 
-    uint32_t glfwExtensionCount = 0;
     const char** glfwExtensions;
 
     auto extensions = getRequiredExtensions();
@@ -66,7 +65,7 @@ void WindowManager::createInstance()
         createInfo.ppEnabledLayerNames = validationLayers.data();
 
         populateDebugMessengerCreateInfo(debugCreateInfo);
-        createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*)&debugCreateInfo;
+        createInfo.pNext = &debugCreateInfo;
     } else {
         createInfo.enabledLayerCount = 0;
 
@@ -160,11 +159,11 @@ bool WindowManager::checkValidationLayerSupport()
     for (const char* layerName : validationLayers) {
         bool layerFound = false;
 
-        for (const auto& layerProperties : availableLayers) {
-            if (strcmp(layerName, layerProperties.layerName) == 0) {
-                layerFound = true;
-                break;
-            }
+        if (std::any_of(
+                availableLayers.cbegin(), availableLayers.cend(), [&](const auto& layerProperties) {
+                    return strcmp(layerName, layerProperties.layerName) == 0;
+                })) {
+            layerFound = true;
         }
 
         if (!layerFound) {

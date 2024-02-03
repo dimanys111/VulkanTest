@@ -3,7 +3,7 @@
 #include "resource.h"
 #include "tools.h"
 
-Pipeline::Pipeline(Device* device) { this->device = device; }
+Pipeline::Pipeline(std::shared_ptr<Device> device) { this->device = device; }
 
 Pipeline::~Pipeline()
 {
@@ -73,7 +73,7 @@ VkShaderModule Pipeline::createShaderModule(const std::vector<char>& code)
 }
 
 void Pipeline::createGraphicsPipeline(
-    std::string vertFile, std::string fragFile, const VkRenderPass& renderPass)
+    const std::string& vertFile, const std::string& fragFile, const VkRenderPass& renderPass)
 {
 
     auto vertShaderCode = Tools::readFile(vertFile);

@@ -6,7 +6,7 @@ class Device;
 
 class Model {
 public:
-    Model(Device* device);
+    explicit Model(std::shared_ptr<Device> device);
     ~Model();
     void Init();
 
@@ -25,5 +25,5 @@ public:
     VkImage textureImage;
     VkDeviceMemory textureImageMemory;
 
-    Device* device;
+    std::shared_ptr<Device> device;
 };

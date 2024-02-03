@@ -8,7 +8,7 @@
             "type": "lldb",
             "request": "launch",
             "name": "Debug",
-            "program": "${workspaceFolder}/build/bin/Debug/x86_64/vulkan_test",
+            "program": "${workspaceFolder}/build/vulkan_test",
             "args": [],
             "cwd": "${workspaceFolder}"
         }

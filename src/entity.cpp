@@ -8,52 +8,47 @@
 #define STB_IMAGE_IMPLEMENTATION // use of stb functions once and for all
 #include "stb_image.h"
 
-Entity::Entity(Device* device, Camera* camera)
+Entity::Entity(std::shared_ptr<Device> device, std::shared_ptr<Camera> camera)
 {
     this->device = device;
     this->camera = camera;
 
-    m_model = new Model(device);
+    modelObj = std::make_shared<Model>(this->device);
 
-    pipeline = new Pipeline(this->device);
+    pipeline = std::make_shared<Pipeline>(this->device);
 }
 
 Entity::~Entity()
 {
-
-    delete m_model;
-
     if (pipeline->textureImageView != VK_NULL_HANDLE) {
         vkDestroyImage(device->device, textureImage, nullptr);
         vkFreeMemory(device->device, textureImageMemory, nullptr);
     }
-
-    delete pipeline;
 }
 
 void Entity::Init()
 {
-    m_model->Init();
+    modelObj->Init();
     pipeline->Init();
 }
 
 void Entity::SetFrontFace(VkFrontFace face) { pipeline->face = face; }
 
-void Entity::LoadTexture(std::string filepath)
+void Entity::LoadTexture(const std::string& filepath)
 {
     createTextureImage(filepath);
     createTextureImageView();
 }
 
-void Entity::LoadModel(std::string filepath)
+void Entity::LoadModel(const std::string& filepath)
 {
     tinyobj::attrib_t attrib;
     std::vector<tinyobj::shape_t> shapes;
     std::vector<tinyobj::material_t> materials;
     std::string warn, err;
 
-    m_model->vertices.clear();
-    m_model->indices.clear();
+    modelObj->vertices.clear();
+    modelObj->indices.clear();
 
     if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, filepath.c_str())) {
         throw std::runtime_error(warn + err);
@@ -76,13 +71,13 @@ void Entity::LoadModel(std::string filepath)
 
             vertex.color = { 0.5f, 0.5f, 0.5f };
 
-            m_model->vertices.push_back(vertex);
-            m_model->indices.push_back(m_model->indices.size());
+            modelObj->vertices.push_back(vertex);
+            modelObj->indices.push_back(modelObj->indices.size());
         }
     }
 }
 
-void Entity::createTextureImage(std::string filepath)
+void Entity::createTextureImage(const std::string& filepath)
 {
     int texWidth = 0, texHeight = 0, texChannels;
     stbi_uc* pixels
@@ -178,17 +173,17 @@ void Entity::Draw(VkCommandBuffer commandBuffer, int i)
 
     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->graphicsPipeline);
 
-    VkBuffer vertexBuffers[] = { m_model->vertexBuffer };
+    VkBuffer vertexBuffers[] = { modelObj->vertexBuffer };
     VkDeviceSize offsets[] = { 0 };
 
-    if (m_model->vertices.size() > 0)
+    if (modelObj->vertices.size() > 0)
         vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 
-    if (m_model->indices.size() > 0)
-        vkCmdBindIndexBuffer(commandBuffer, m_model->indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+    if (modelObj->indices.size() > 0)
+        vkCmdBindIndexBuffer(commandBuffer, modelObj->indexBuffer, 0, VK_INDEX_TYPE_UINT16);
 
     vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
         pipeline->pipelineLayout, 0, 1, &pipeline->descriptorSets[i], 0, nullptr);
     // vkCmdDraw(commandBuffer, static_cast<uint32_t>(vertices.size()), 1, 0, 0);
-    vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(m_model->indices.size()), 1, 0, 0, 0);
+    vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(modelObj->indices.size()), 1, 0, 0, 0);
 }

@@ -22,32 +22,24 @@ Engine::~Engine()
     }
 
     vkDestroyDescriptorPool(device->device, imguiPool, nullptr);
-
-    delete game;
-    delete graphics;
-    delete swapchain;
-    delete device;
-    delete window;
 }
 
 void Engine::Init()
 {
     printf("Initializing vulkan instance.");
 
-    window = new WindowManager();
-    window->Init();
+    window = std::make_shared<WindowManager>();
 
-    device = new Device(window);
-    device->Init();
+    device = std::make_shared<Device>(window);
 
     Tools::device = device;
 
-    swapchain = new SwapChain(window, device);
+    swapchain = std::make_shared<SwapChain>(window, device);
     swapchain->Init();
 
-    graphics = new Graphics(window, device, swapchain);
+    graphics = std::make_shared<Graphics>(window, device, swapchain);
 
-    game = new Game(device, graphics);
+    game = std::make_shared<Game>(device, graphics);
 
     GUIInit();
 
@@ -298,64 +290,6 @@ void Engine::FramePresent(uint32_t imageIndex)
     }
 
     vkQueueWaitIdle(device->presentQueue);
-
-    currentFrame = (currentFrame + 1) % Resource::countFrames;
-}
-
-void Engine::drawFrame()
-{
-    vkWaitForFences(device->device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
-
-    uint32_t imageIndex;
-    vkAcquireNextImageKHR(device->device, swapchain->swapChain, UINT64_MAX,
-        imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
-
-    Resource::currentImage = currentFrame;
-
-    Update();
-
-    // Check if a previous frame is using this image (i.e. there is its fence to
-    // wait on)
-    if (imagesInFlight[imageIndex] != VK_NULL_HANDLE) {
-        vkWaitForFences(device->device, 1, &imagesInFlight[imageIndex], VK_TRUE, UINT64_MAX);
-    }
-    // Mark the image as now being in use by this frame
-    imagesInFlight[imageIndex] = inFlightFences[currentFrame];
-
-    VkSubmitInfo submitInfo {};
-    submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-
-    VkSemaphore waitSemaphores[] = { imageAvailableSemaphores[currentFrame] };
-    VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
-    submitInfo.waitSemaphoreCount = 1;
-    submitInfo.pWaitSemaphores = waitSemaphores;
-    submitInfo.pWaitDstStageMask = waitStages;
-    submitInfo.commandBufferCount = 1;
-    submitInfo.pCommandBuffers = &(graphics->commandBuffers[imageIndex]);
-
-    VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[currentFrame] };
-    submitInfo.signalSemaphoreCount = 1;
-    submitInfo.pSignalSemaphores = signalSemaphores;
-
-    vkResetFences(device->device, 1, &inFlightFences[currentFrame]);
-
-    if (vkQueueSubmit(device->graphicsQueue, 1, &submitInfo, inFlightFences[currentFrame])
-        != VK_SUCCESS) {
-        throw std::runtime_error("failed to submit draw command buffer!");
-    }
-
-    VkPresentInfoKHR presentInfo {};
-    presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-
-    presentInfo.waitSemaphoreCount = 1;
-    presentInfo.pWaitSemaphores = signalSemaphores;
-
-    VkSwapchainKHR swapChains[] = { swapchain->swapChain };
-    presentInfo.swapchainCount = 1;
-    presentInfo.pSwapchains = swapChains;
-    presentInfo.pImageIndices = &imageIndex;
-
-    vkQueuePresentKHR(device->presentQueue, &presentInfo);
 
     currentFrame = (currentFrame + 1) % Resource::countFrames;
 }

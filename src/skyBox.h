@@ -8,7 +8,7 @@ class GameObject;
 
 class SkyBox {
 public:
-    SkyBox(Device* device, Camera* camera, const ShadersPath& paths);
+    SkyBox(std::shared_ptr<Device> device, std::shared_ptr<Camera> camera_, const ShadersPath& paths);
     ~SkyBox();
 
     void Update(float deltaTime);
@@ -19,6 +19,6 @@ public:
     std::vector<Vertex> vertices;
     std::vector<uint16_t> indices;
 
-    GameObject* go;
-    Camera* m_camera;
+    std::shared_ptr<GameObject> go;
+    std::shared_ptr<Camera> camera;
 };

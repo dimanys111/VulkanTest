@@ -6,7 +6,7 @@
 #include "resource.h"
 #include "skyBox.h"
 
-Game::Game(Device* device, Graphics* graphics)
+Game::Game(std::shared_ptr<Device> device, std::shared_ptr<Graphics> graphics)
 {
     this->device = device;
     this->graphics = graphics;
@@ -14,21 +14,15 @@ Game::Game(Device* device, Graphics* graphics)
     Init();
 }
 
-Game::~Game()
-{
-
-    delete gameObject;
-    delete skyBox;
-    delete dirLight;
-    delete camera;
-}
+Game::~Game() { }
 
 void Game::Init()
 {
 
-    camera = new Camera(Resource::swapChainExtent.width, Resource::swapChainExtent.height);
+    camera = std::make_shared<Camera>(
+        Resource::swapChainExtent.width, Resource::swapChainExtent.height);
 
-    gameObject = new GameObject(device, camera);
+    gameObject = std::make_shared<GameObject>(device, camera);
     gameObject->SetShadersName("shaders/vert.spv", "shaders/frag.spv");
     gameObject->SetSize(glm::vec3(2.0f, 2.0f, 2.0f));
     gameObject->SetPosition({ 0, 0, 6 });
@@ -38,9 +32,11 @@ void Game::Init()
     gameObject->applyLight = true;
     gameObject->Init();
 
-    skyBox = new SkyBox(device, camera, { "shaders/skyVert.spv", "shaders/skyFrag.spv" });
+    skyBox = std::make_shared<SkyBox>(
+        device, camera, ShadersPath { "shaders/skyVert.spv", "shaders/skyFrag.spv" });
 
-    dirLight = new DirLight(device, camera, { "shaders/sunV.spv", "shaders/sunF.spv" });
+    dirLight = std::make_shared<DirLight>(
+        device, camera, ShadersPath { "shaders/sunV.spv", "shaders/sunF.spv" });
 
     graphics->SetGameObject(gameObject);
     graphics->SetGameObject(skyBox->go);

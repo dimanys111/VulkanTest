@@ -7,7 +7,7 @@ class Device;
 class Pipeline {
 
 public:
-    Pipeline(Device* device);
+    explicit Pipeline(std::shared_ptr<Device> device);
     ~Pipeline();
 
     void Init();
@@ -22,9 +22,9 @@ public:
 
     void createUniformBuffers();
     void createGraphicsPipeline(
-        std::string vertFile, std::string fragFile, const VkRenderPass& renderPass);
+        const std::string& vertFile, const std::string& fragFile, const VkRenderPass& renderPass);
 
-    Device* device = NULL;
+    std::shared_ptr<Device> device;
 
     VkPipelineLayout pipelineLayout;
     VkPipeline graphicsPipeline;

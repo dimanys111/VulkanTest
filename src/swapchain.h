@@ -7,7 +7,7 @@ class WindowManager;
 
 class SwapChain {
 public:
-    SwapChain(WindowManager* window, Device* device);
+    SwapChain(std::shared_ptr<WindowManager> window, std::shared_ptr<Device> device);
 
     ~SwapChain();
 
@@ -31,6 +31,6 @@ public:
     std::vector<VkImage> swapChainImages;
     std::vector<VkImageView> swapChainImageViews;
 
-    WindowManager* window;
-    Device* device;
+    std::shared_ptr<WindowManager> window;
+    std::shared_ptr<Device> device;
 };

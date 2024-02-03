@@ -1,21 +1,22 @@
 #pragma once
 
 #include "stdinclude.h"
+
 class Camera;
 class Device;
 class GameObject;
 
 class DirLight {
 public:
-    DirLight(Device* device, Camera* camera, ShadersPath paths);
+    DirLight(std::shared_ptr<Device> device, std::shared_ptr<Camera> camera, const ShadersPath &paths);
     ~DirLight();
     void Update(float deltaTime);
 
     void SetTarget(glm::vec3 pos);
 
-    GameObject* go;
+    std::shared_ptr<GameObject> go;
 
-    Camera* camera;
+    std::shared_ptr<Camera> camera;
 
     float distance;
     float angle;

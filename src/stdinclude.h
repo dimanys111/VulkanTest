@@ -9,6 +9,7 @@
 #include <fstream>
 #include <glm/gtx/rotate_vector.hpp>
 #include <iostream>
+#include <memory>
 #include <optional>
 #include <ostream>
 #include <set>
