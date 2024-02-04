@@ -29,8 +29,10 @@ void Engine::Init()
     printf("Initializing vulkan instance.");
 
     window = std::make_shared<WindowManager>();
+    window->Init();
 
     device = std::make_shared<Device>(window);
+    device->Init();
 
     Tools::device = device;
 
@@ -40,6 +42,7 @@ void Engine::Init()
     graphics = std::make_shared<Graphics>(window, device, swapchain);
 
     game = std::make_shared<Game>(device, graphics);
+    game->Init();
 
     GUIInit();
 

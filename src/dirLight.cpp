@@ -20,6 +20,7 @@ DirLight::DirLight(
     go->SetShadersName(paths.vertShader, paths.fragShader);
     go->setVertex(pObject.vertices);
     go->setIndices(pObject.indices);
+    go->LoadTexture("textures/text2.png");
     go->applyLight = false;
     go->Init();
 

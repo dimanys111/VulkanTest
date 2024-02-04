@@ -1,7 +1,7 @@
 #include "window.h"
 #include "resource.h"
 
-WindowManager::WindowManager() { Init(); }
+WindowManager::WindowManager() { }
 
 WindowManager::~WindowManager()
 {
@@ -20,16 +20,13 @@ WindowManager::~WindowManager()
 void WindowManager::Init()
 {
     glfwInit();
-
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    ;
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
     window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan", nullptr, nullptr);
     glfwSetWindowUserPointer(window, this);
-    //        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetKeyCallback(window, key_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
-
     createInstance();
     setupDebugMessenger();
     createSurface();

@@ -10,7 +10,8 @@
             "name": "Debug",
             "program": "${workspaceFolder}/build/vulkan_test",
             "args": [],
-            "cwd": "${workspaceFolder}"
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "cmake_build",
         }
     ]
 }

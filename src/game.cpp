@@ -10,8 +10,6 @@ Game::Game(std::shared_ptr<Device> device, std::shared_ptr<Graphics> graphics)
 {
     this->device = device;
     this->graphics = graphics;
-
-    Init();
 }
 
 Game::~Game() { }
@@ -33,10 +31,10 @@ void Game::Init()
     gameObject->Init();
 
     skyBox = std::make_shared<SkyBox>(
-        device, camera, ShadersPath { "shaders/skyVert.spv", "shaders/skyFrag.spv" });
+        device, camera, ShadersPath { "shaders/vert.spv", "shaders/frag.spv" });
 
     dirLight = std::make_shared<DirLight>(
-        device, camera, ShadersPath { "shaders/sunV.spv", "shaders/sunF.spv" });
+        device, camera, ShadersPath { "shaders/vert.spv", "shaders/frag.spv" });
 
     graphics->SetGameObject(gameObject);
     graphics->SetGameObject(skyBox->go);

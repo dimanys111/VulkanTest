@@ -1,11 +1,7 @@
 #include "device.h"
 #include "window.h"
 
-Device::Device(std::shared_ptr<WindowManager> window)
-{
-    this->window = window;
-    Init();
-}
+Device::Device(std::shared_ptr<WindowManager> window) { this->window = window; }
 
 Device::~Device() { vkDestroyDevice(device, nullptr); }
 
