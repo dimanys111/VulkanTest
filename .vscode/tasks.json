@@ -1,44 +1,52 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "cmake",
-            "group": "build",
-            "type": "shell",
-            "command": "cmake",
-            "args": [
-                "--no-warn-unused-cli",
-                "-DCMAKE_BUILD_TYPE:STRING=Debug",
-                "-DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE",
-                "-DCMAKE_C_COMPILER:FILEPATH=/usr/bin/gcc",
-                "-DCMAKE_CXX_COMPILER:FILEPATH=/usr/bin/g++",
-                "-S/${workspaceFolder}",
-                "-B/${workspaceFolder}/build",
-                "-G",
-                "Ninja",
-              ],
-            "problemMatcher": "$tsc-watch",
-        },
-        {
-            "label": "build",
-            "group": "build",
-            "type": "shell",
-            "command": "cmake",
-            "args": [
-                // enable for debugging with breakpoints
-                "--build",
-                "${workspaceFolder}/build",
-                "--config",
-                "Debug",
-                "--target",
-                "all",
-                "--"
-              ],
-              "dependsOn": ["cmake"]
-        },
-        {
-          "label": "cmake_build",
-          "dependsOn": ["build"]
-        }
-    ],
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "compile_shaders",
+      "group": "build",
+      "type": "shell",
+      "command": "${workspaceFolder}/shaders/compile_shaders.sh",
+      "args": [],
+      "options": {
+        "cwd": "${workspaceFolder}/shaders"
+      }
+    },
+    {
+      "label": "cmake",
+      "group": "build",
+      "type": "shell",
+      "command": "cmake",
+      "args": [
+        "--no-warn-unused-cli",
+        "-DCMAKE_BUILD_TYPE:STRING=Debug",
+        "-DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE",
+        "-DCMAKE_C_COMPILER:FILEPATH=/usr/bin/gcc",
+        "-DCMAKE_CXX_COMPILER:FILEPATH=/usr/bin/g++",
+        "-S/${workspaceFolder}",
+        "-B/${workspaceFolder}/build",
+        "-G",
+        "Ninja",
+      ],
+    },
+    {
+      "label": "build",
+      "group": "build",
+      "type": "shell",
+      "command": "cmake",
+      "args": [
+        "--build",
+        "${workspaceFolder}/build",
+        "--config",
+        "Debug",
+        "--target",
+        "all",
+        "--"
+      ],
+      "dependsOn": ["cmake"]
+    },
+    {
+      "label": "cmake_build",
+      "dependsOn": ["build", "compile_shaders"]
+    }
+  ],
 }

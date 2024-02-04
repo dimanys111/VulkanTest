@@ -48,7 +48,6 @@ SkyBox::SkyBox(
     go->SetSize(glm::vec3(size, size, size));
     go->setVertex(vertices);
     go->setIndices(indices);
-    go->LoadTexture("textures/text2.png");
     go->Init();
 }
 

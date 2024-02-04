@@ -21,7 +21,7 @@ void Game::Init()
         Resource::swapChainExtent.width, Resource::swapChainExtent.height);
 
     gameObject = std::make_shared<GameObject>(device, camera);
-    gameObject->SetShadersName("shaders/vert.spv", "shaders/frag.spv");
+    gameObject->SetShadersName("shaders/objVert.spv", "shaders/objFrag.spv");
     gameObject->SetSize(glm::vec3(2.0f, 2.0f, 2.0f));
     gameObject->SetPosition({ 0, 0, 6 });
     gameObject->LoadTexture("textures/text2.png");
@@ -31,10 +31,10 @@ void Game::Init()
     gameObject->Init();
 
     skyBox = std::make_shared<SkyBox>(
-        device, camera, ShadersPath { "shaders/vert.spv", "shaders/frag.spv" });
+        device, camera, ShadersPath { "shaders/skyVert.spv", "shaders/skyFrag.spv" });
 
     dirLight = std::make_shared<DirLight>(
-        device, camera, ShadersPath { "shaders/vert.spv", "shaders/frag.spv" });
+        device, camera, ShadersPath { "shaders/sunVert.spv", "shaders/sunFrag.spv" });
 
     graphics->SetGameObject(gameObject);
     graphics->SetGameObject(skyBox->go);
