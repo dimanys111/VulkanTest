@@ -2,6 +2,7 @@
 #include "camera.h"
 #include "dirLight.h"
 #include "gameObject.h"
+#include "cube.h"
 #include "graphics.h"
 #include "resource.h"
 #include "skyBox.h"
@@ -20,15 +21,8 @@ void Game::Init()
     camera = std::make_shared<Camera>(
         Resource::swapChainExtent.width, Resource::swapChainExtent.height);
 
-    gameObject = std::make_shared<GameObject>(device, camera);
-    gameObject->SetShadersName("shaders/objVert.spv", "shaders/objFrag.spv");
-    gameObject->SetSize(glm::vec3(2.0f, 2.0f, 2.0f));
-    gameObject->SetPosition({ 0, 0, 6 });
-    gameObject->LoadTexture("textures/text2.png");
-    gameObject->LoadModel("models/model.obj");
-    gameObject->SetFrontFace(VK_FRONT_FACE_COUNTER_CLOCKWISE);
-    gameObject->applyLight = true;
-    gameObject->Init();
+    cube = std::make_shared<Cube>(
+        device, camera, ShadersPath { "shaders/objVert.spv", "shaders/objFrag.spv" });
 
     skyBox = std::make_shared<SkyBox>(
         device, camera, ShadersPath { "shaders/skyVert.spv", "shaders/skyFrag.spv" });
@@ -36,7 +30,7 @@ void Game::Init()
     dirLight = std::make_shared<DirLight>(
         device, camera, ShadersPath { "shaders/sunVert.spv", "shaders/sunFrag.spv" });
 
-    graphics->SetGameObject(gameObject);
+    graphics->SetGameObject(cube->go);
     graphics->SetGameObject(skyBox->go);
     graphics->SetGameObject(dirLight->go);
 }
@@ -45,8 +39,8 @@ void Game::Update(float time)
 {
 
     camera->Update(time);
-    gameObject->Rotating(glm::vec3(0, 0, 1) * time);
-    gameObject->Update(time);
+
+    cube->Update(time);
 
     dirLight->SetTarget(camera->GetPosition());
     dirLight->Update(time);
@@ -56,7 +50,7 @@ void Game::Update(float time)
 
 void Game::Draw(VkCommandBuffer cmd, int indx)
 {
-    gameObject->Draw(cmd, indx);
+    cube->go->Draw(cmd, indx);
 
     skyBox->go->Draw(cmd, indx);
 

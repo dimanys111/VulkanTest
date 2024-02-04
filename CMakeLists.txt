@@ -24,6 +24,8 @@ set(FILES_SRC_MY
 
     src/camera.cpp
     src/camera.h
+    src/cube.cpp
+    src/cube.h
     src/device.cpp
     src/device.h
     src/dirLight.cpp

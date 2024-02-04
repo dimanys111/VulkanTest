@@ -5,6 +5,7 @@
 class Device;
 class Graphics;
 class GameObject;
+class Cube;
 class DirLight;
 class SkyBox;
 class Camera;
@@ -21,11 +22,11 @@ public:
 
     std::shared_ptr<Graphics> graphics;
 
+    std::shared_ptr<Cube> cube;
+
     std::shared_ptr<SkyBox> skyBox;
 
     std::shared_ptr<Camera> camera;
-
-    std::shared_ptr<GameObject> gameObject;
 
     std::shared_ptr<DirLight> dirLight;
 
