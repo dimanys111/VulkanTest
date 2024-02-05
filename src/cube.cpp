@@ -6,7 +6,6 @@
 Cube::Cube(std::shared_ptr<Device> device, std::shared_ptr<Camera> camera, const ShadersPath& paths)
     : GameObject(device, camera)
 {
-    this->m_camera = camera;
 
     SetShadersName(paths.vertShader, paths.fragShader);
     SetSize(glm::vec3(2.0f, 2.0f, 2.0f));

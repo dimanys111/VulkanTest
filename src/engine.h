@@ -74,7 +74,7 @@ private:
 
     float m_v[3];
 
-    bool menuSwaped = false;
+    bool m_menuSwaped = false;
 
     bool m_show = true;
 

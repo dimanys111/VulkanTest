@@ -12,15 +12,15 @@ public:
 
     void Init();
 
-    VkDevice device() const { return m_device; }
+    VkDevice& device() { return m_device; }
 
-    VkQueue graphicsQueue() const { return m_graphicsQueue; }
+    VkQueue& graphicsQueue() { return m_graphicsQueue; }
 
-    VkQueue presentQueue() const { return m_presentQueue; }
+    VkQueue& presentQueue() { return m_presentQueue; }
 
-    uint32_t queueFamily() const { return m_queueFamily; }
+    uint32_t& queueFamily() { return m_queueFamily; }
 
-    VkPhysicalDevice physicalDevice() const { return m_physicalDevice; }
+    VkPhysicalDevice& physicalDevice() { return m_physicalDevice; }
 
     QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device) const;
 

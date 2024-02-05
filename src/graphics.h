@@ -18,28 +18,35 @@ public:
 
     void Init();
 
+    std::vector<VkCommandBuffer>& commandBuffers() { return m_commandBuffers; }
+
+    void setCommandBuffers();
+
+    std::shared_ptr<Renderer>& renderer() { return m_renderer; }
+
+    std::vector<VkFramebuffer>& swapChainFramebuffers() { return m_swapChainFramebuffers; }
+
+private:
     void createFramebuffers();
 
     void createDepthResources();
 
     void createCommandBuffers();
 
-    void setCommandBuffers();
+    std::vector<VkCommandBuffer> m_commandBuffers;
 
-    std::vector<VkCommandBuffer> commandBuffers;
+    std::vector<VkFramebuffer> m_swapChainFramebuffers;
 
-    std::vector<VkFramebuffer> swapChainFramebuffers;
+    std::shared_ptr<WindowManager> m_window;
+    std::shared_ptr<Device> m_device;
+    std::shared_ptr<SwapChain> m_swapchain;
+    std::shared_ptr<Renderer> m_renderer;
 
-    std::shared_ptr<WindowManager> window;
-    std::shared_ptr<Device> device;
-    std::shared_ptr<SwapChain> swapchain;
-    std::shared_ptr<Renderer> renderer;
+    std::vector<std::shared_ptr<GameObject>> m_gameObjects;
 
-    std::vector<std::shared_ptr<GameObject>> gameObjects;
+    VkImage m_depthImage;
+    VkDeviceMemory m_depthImageMemory;
+    VkImageView m_depthImageView;
 
-    VkImage depthImage;
-    VkDeviceMemory depthImageMemory;
-    VkImageView depthImageView;
-
-    bool show = true;
+    bool m_show = true;
 };

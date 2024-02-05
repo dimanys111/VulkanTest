@@ -71,7 +71,7 @@ void Camera::Update(float deltaTime)
             += glm::normalize(glm::cross(m_cameraFront, m_cameraUp)) * currSpeed * deltaTime;
 
     if (!Resource::showCursor)
-        processMouse(WindowManager::xpos, WindowManager::ypos);
+        processMouse(WindowManager::m_xPos, WindowManager::m_yPos);
 
     m_view = glm::lookAt(m_cameraPos, m_cameraPos + m_cameraFront, m_cameraUp);
 }

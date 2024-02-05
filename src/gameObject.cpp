@@ -25,18 +25,18 @@ void GameObject::Update(float deltaTime)
 
 void GameObject::setVertex(const std::vector<Vertex>& vertices)
 {
-    this->m_modelObj->vertices = vertices;
+    m_modelObj->vertices() = vertices;
 }
 
 void GameObject::setIndices(const std::vector<uint16_t>& indices)
 {
-    this->m_modelObj->indices = indices;
+    m_modelObj->indices() = indices;
 }
 
 void GameObject::SetPosition(glm::vec3 position)
 {
     position /= 10;
-    this->m_position = position;
+    m_position = position;
 }
 
 void GameObject::AppyTransforms(float deltaTime)
@@ -54,24 +54,24 @@ void GameObject::AppyTransforms(float deltaTime)
 
 glm::vec3 GameObject::GetPosition() { return m_position * 10.0f; }
 
-void GameObject::SetSize(glm::vec3 size) { this->m_size = size; }
+void GameObject::SetSize(glm::vec3 size) { m_size = size; }
 
 void GameObject::SetShadersName(const std::string_view& vertFile, const std::string_view& fragFile)
 {
-    this->m_vertFile = vertFile;
-    this->m_fragFile = fragFile;
+    m_vertFile = vertFile;
+    m_fragFile = fragFile;
 }
 
 void GameObject::SetRotation(glm::vec3 rotation)
 {
     rotation /= 10.0f;
-    this->m_rotate = rotation;
+    m_rotate = rotation;
 }
 
 void GameObject::Rotating(glm::vec3 rotation)
 {
     rotation /= 10.0f;
-    this->m_rotate += rotation;
+    m_rotate += rotation;
 }
 
 glm::vec3 GameObject::GetRotate() const { return m_rotate * 10.0f; }
@@ -86,8 +86,8 @@ void GameObject::updateUniformBuffer(float deltaTime) const
     ubo.sunDir = m_applyLight ? Resource::sunDir : glm::vec3(1.0f, -3.0f, -1.0f);
 
     void* data;
-    vkMapMemory(m_device->device(), m_pipeline->uniformBuffersMemory[Resource::currentImage], 0,
+    vkMapMemory(m_device->device(), m_pipeline->uniformBuffersMemory()[Resource::currentImage], 0,
         sizeof(ubo), 0, &data);
     memcpy(data, &ubo, sizeof(ubo));
-    vkUnmapMemory(m_device->device(), m_pipeline->uniformBuffersMemory[Resource::currentImage]);
+    vkUnmapMemory(m_device->device(), m_pipeline->uniformBuffersMemory()[Resource::currentImage]);
 }

@@ -13,6 +13,11 @@ public:
 
     void Init();
 
+    VkSwapchainKHR& swapChain() { return m_swapChain; }
+
+    std::vector<VkImageView>& swapChainImageViews() { return m_swapChainImageViews; }
+
+private:
     void createSwapChain();
 
     void createImageViews();
@@ -27,10 +32,10 @@ public:
 
     VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
 
-    VkSwapchainKHR swapChain;
-    std::vector<VkImage> swapChainImages;
-    std::vector<VkImageView> swapChainImageViews;
+    VkSwapchainKHR m_swapChain;
+    std::vector<VkImage> m_swapChainImages;
+    std::vector<VkImageView> m_swapChainImageViews;
 
-    std::shared_ptr<WindowManager> window;
-    std::shared_ptr<Device> device;
+    std::shared_ptr<WindowManager> m_window;
+    std::shared_ptr<Device> m_device;
 };

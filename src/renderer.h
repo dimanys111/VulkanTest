@@ -9,7 +9,10 @@ class Renderer {
 public:
     explicit Renderer(std::shared_ptr<Device> device);
     ~Renderer();
+    VkRenderPass& renderPass() { return m_renderPass; }
+    VkFormat findDepthFormat();
 
+private:
     void createCommandPool();
 
     void createRenderPass();
@@ -17,9 +20,7 @@ public:
     VkFormat findSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling,
         VkFormatFeatureFlags features);
 
-    VkFormat findDepthFormat();
+    VkRenderPass m_renderPass;
 
-    VkRenderPass renderPass;
-
-    std::shared_ptr<Device> device;
+    std::shared_ptr<Device> m_device;
 };

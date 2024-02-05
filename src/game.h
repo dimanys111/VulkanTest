@@ -20,17 +20,18 @@ public:
 
     void Draw(VkCommandBuffer cmd, int indx);
 
-    std::shared_ptr<Graphics> graphics;
+private:
+    std::shared_ptr<Graphics> m_graphics;
 
-    std::shared_ptr<Cube> cube;
+    std::shared_ptr<Cube> m_cube;
 
-    std::shared_ptr<SkyBox> skyBox;
+    std::shared_ptr<SkyBox> m_skyBox;
 
-    std::shared_ptr<Camera> camera;
+    std::shared_ptr<Camera> m_camera;
 
-    std::shared_ptr<DirLight> dirLight;
+    std::shared_ptr<DirLight> m_dirLight;
 
-    std::shared_ptr<Device> device;
+    std::shared_ptr<Device> m_device;
 
-    std::vector<std::vector<std::vector<GameObject*>>> chunks;
+    std::vector<std::vector<std::vector<GameObject*>>> m_chunks;
 };

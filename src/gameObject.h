@@ -14,9 +14,9 @@ public:
 
     void Update(float deltaTime);
 
-    std::string fragFile() const { return m_fragFile; }
+    std::string& fragFile() { return m_fragFile; }
 
-    std::string vertFile() const { return m_vertFile; }
+    std::string& vertFile() { return m_vertFile; }
 
 protected:
     void setVertex(const std::vector<Vertex>& vertices);

@@ -3,7 +3,7 @@
 #include "device.h"
 #include "resource.h"
 
-inline PrimitiveObject Tools::quad = {
+inline PrimitiveObject Tools::m_quad = {
     { { { -0.5f, -0.5f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 1.0f, 0.0f, 0.0f }, { 1.0f, 0.0f } },
         { { 0.5f, -0.5f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f } },
         { { 0.5f, 0.5f, 0.0f }, { -1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f } },
@@ -11,7 +11,7 @@ inline PrimitiveObject Tools::quad = {
     { 2, 1, 0, 0, 3, 2 }
 };
 
-inline PrimitiveObject Tools::box
+inline PrimitiveObject Tools::m_box
     = { {
             // Back
             { { -1.0f, -1.0f, 1.0f }, { 1.0f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0.0f }, { 1.0f, 0.0f } },
@@ -47,7 +47,7 @@ inline PrimitiveObject Tools::box
           { 2, 1, 0, 0, 3, 2, 4, 5, 6, 6, 7, 4, 8, 9, 10, 10, 11, 8, 14, 13, 12, 12, 15, 14, 18, 17,
               16, 16, 19, 18, 20, 21, 22, 22, 23, 20 } };
 
-inline std::vector<int> Tools::_edgeTable = { 0x0, 0x109, 0x203, 0x30a, 0x406, 0x50f, 0x605, 0x70c,
+inline std::vector<int> Tools::m_edgeTable = { 0x0, 0x109, 0x203, 0x30a, 0x406, 0x50f, 0x605, 0x70c,
     0x80c, 0x905, 0xa0f, 0xb06, 0xc0a, 0xd03, 0xe09, 0xf00, 0x190, 0x99, 0x393, 0x29a, 0x596, 0x49f,
     0x795, 0x69c, 0x99c, 0x895, 0xb9f, 0xa96, 0xd9a, 0xc93, 0xf99, 0xe90, 0x230, 0x339, 0x33, 0x13a,
     0x636, 0x73f, 0x435, 0x53c, 0xa3c, 0xb35, 0x83f, 0x936, 0xe3a, 0xf33, 0xc39, 0xd30, 0x3a0,
@@ -67,7 +67,7 @@ inline std::vector<int> Tools::_edgeTable = { 0x0, 0x109, 0x203, 0x30a, 0x406, 0
     0xb9f, 0x895, 0x99c, 0x69c, 0x795, 0x49f, 0x596, 0x29a, 0x393, 0x99, 0x190, 0xf00, 0xe09, 0xd03,
     0xc0a, 0xb06, 0xa0f, 0x905, 0x80c, 0x70c, 0x605, 0x50f, 0x406, 0x30a, 0x203, 0x109, 0x0 };
 
-inline std::vector<std::vector<int>> Tools::_triTable
+inline std::vector<std::vector<int>> Tools::m_triTable
     = { { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
           { 0, 8, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
           { 0, 1, 9, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
@@ -339,7 +339,7 @@ VkImageView Tools::createImageView(VkImage image, VkFormat format, VkImageAspect
     viewInfo.subresourceRange.layerCount = 1;
 
     VkImageView imageView;
-    if (vkCreateImageView(device->device(), &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
+    if (vkCreateImageView(m_device->device(), &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
         throw std::runtime_error("failed to create texture image view!");
     }
 
@@ -365,23 +365,24 @@ void Tools::createImage(uint32_t width, uint32_t height, VkFormat format, VkImag
     imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
     imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-    if (vkCreateImage(device->device(), &imageInfo, nullptr, &image) != VK_SUCCESS) {
+    if (vkCreateImage(m_device->device(), &imageInfo, nullptr, &image) != VK_SUCCESS) {
         throw std::runtime_error("failed to create image!");
     }
 
     VkMemoryRequirements memRequirements;
-    vkGetImageMemoryRequirements(device->device(), image, &memRequirements);
+    vkGetImageMemoryRequirements(m_device->device(), image, &memRequirements);
 
     VkMemoryAllocateInfo allocInfo {};
     allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     allocInfo.allocationSize = memRequirements.size;
-    allocInfo.memoryTypeIndex = device->findMemoryType(memRequirements.memoryTypeBits, properties);
+    allocInfo.memoryTypeIndex
+        = m_device->findMemoryType(memRequirements.memoryTypeBits, properties);
 
-    if (vkAllocateMemory(device->device(), &allocInfo, nullptr, &imageMemory) != VK_SUCCESS) {
+    if (vkAllocateMemory(m_device->device(), &allocInfo, nullptr, &imageMemory) != VK_SUCCESS) {
         throw std::runtime_error("failed to allocate image memory!");
     }
 
-    vkBindImageMemory(device->device(), image, imageMemory, 0);
+    vkBindImageMemory(m_device->device(), image, imageMemory, 0);
 }
 
 void Tools::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage,
@@ -393,23 +394,24 @@ void Tools::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage,
     bufferInfo.usage = usage;
     bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-    if (vkCreateBuffer(device->device(), &bufferInfo, nullptr, &buffer) != VK_SUCCESS) {
+    if (vkCreateBuffer(m_device->device(), &bufferInfo, nullptr, &buffer) != VK_SUCCESS) {
         throw std::runtime_error("failed to create buffer!");
     }
 
     VkMemoryRequirements memRequirements;
-    vkGetBufferMemoryRequirements(device->device(), buffer, &memRequirements);
+    vkGetBufferMemoryRequirements(m_device->device(), buffer, &memRequirements);
 
     VkMemoryAllocateInfo allocInfo {};
     allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     allocInfo.allocationSize = memRequirements.size;
-    allocInfo.memoryTypeIndex = device->findMemoryType(memRequirements.memoryTypeBits, properties);
+    allocInfo.memoryTypeIndex
+        = m_device->findMemoryType(memRequirements.memoryTypeBits, properties);
 
-    if (vkAllocateMemory(device->device(), &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS) {
+    if (vkAllocateMemory(m_device->device(), &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS) {
         throw std::runtime_error("failed to allocate buffer memory!");
     }
 
-    vkBindBufferMemory(device->device(), buffer, bufferMemory, 0);
+    vkBindBufferMemory(m_device->device(), buffer, bufferMemory, 0);
 }
 
 void Tools::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
@@ -455,7 +457,7 @@ VkCommandBuffer Tools::beginSingleTimeCommands()
     allocInfo.commandBufferCount = 1;
 
     VkCommandBuffer commandBuffer;
-    vkAllocateCommandBuffers(device->device(), &allocInfo, &commandBuffer);
+    vkAllocateCommandBuffers(m_device->device(), &allocInfo, &commandBuffer);
 
     VkCommandBufferBeginInfo beginInfo {};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -475,10 +477,10 @@ void Tools::endSingleTimeCommands(VkCommandBuffer commandBuffer)
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &commandBuffer;
 
-    vkQueueSubmit(device->graphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE);
-    vkQueueWaitIdle(device->graphicsQueue());
+    vkQueueSubmit(m_device->graphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE);
+    vkQueueWaitIdle(m_device->graphicsQueue());
 
-    vkFreeCommandBuffers(device->device(), Resource::commandPool, 1, &commandBuffer);
+    vkFreeCommandBuffers(m_device->device(), Resource::commandPool, 1, &commandBuffer);
 }
 
 PrimitiveObject Tools::GetPrimitives(PrimitiveType type)
@@ -489,11 +491,11 @@ PrimitiveObject Tools::GetPrimitives(PrimitiveType type)
     case PrimitiveType::PRIMITIVE_TYPE_CILINDER:
         return CreatePipe();
     case PrimitiveType::PRIMITIVE_TYPE_CUBE:
-        return box;
+        return m_box;
     case PrimitiveType::PRIMITIVE_TYPE_CAPSULE:
         return CreateCapsule();
     case PrimitiveType::PRIMITIVE_TYPE_QUAD:
-        return quad;
+        return m_quad;
     }
 
     return PrimitiveObject({ {}, {} });
@@ -822,24 +824,24 @@ PrimitiveObject Tools::MakeMCubes(size_t size, glm::vec3 pos)
 
     BasicPerlinNoise noise;
 
-    Gdata.clear();
+    m_gdata.clear();
 
     srand(234525);
 
-    Gdata.resize(size + 1);
+    m_gdata.resize(size + 1);
     for (int x = 0; x < size + 1; x++) {
-        Gdata[x].resize(size + 1);
+        m_gdata[x].resize(size + 1);
         for (int y = 0; y < size + 1; y++) {
-            Gdata[x][y].resize(size + 1);
+            m_gdata[x][y].resize(size + 1);
             for (int z = 0; z < size + 1; z++) {
                 float posx = (pos.x * 16) + x;
                 float posz = (pos.z * 16) + z;
 
                 float val = noise.accumulatedOctaveNoise2D(posx / 100, posz / 100, 8.0f) * 10 + 20;
                 if (val > (pos.y * 16) + y)
-                    Gdata[x][y][z] = val;
+                    m_gdata[x][y][z] = val;
                 else
-                    Gdata[x][y][z] = 0;
+                    m_gdata[x][y][z] = 0;
             }
         }
     }
@@ -860,21 +862,21 @@ double Tools::GetVal(int x, int y, int z, int i)
 {
     switch (i) {
     case 0:
-        return Gdata[x][y][z];
+        return m_gdata[x][y][z];
     case 1:
-        return Gdata[x + 1][y][z];
+        return m_gdata[x + 1][y][z];
     case 2:
-        return Gdata[x + 1][y + 1][z];
+        return m_gdata[x + 1][y + 1][z];
     case 3:
-        return Gdata[x][y + 1][z];
+        return m_gdata[x][y + 1][z];
     case 4:
-        return Gdata[x][y][z + 1];
+        return m_gdata[x][y][z + 1];
     case 5:
-        return Gdata[x + 1][y][z + 1];
+        return m_gdata[x + 1][y][z + 1];
     case 6:
-        return Gdata[x + 1][y + 1][z + 1];
+        return m_gdata[x + 1][y + 1][z + 1];
     case 7:
-        return Gdata[x][y + 1][z + 1];
+        return m_gdata[x][y + 1][z + 1];
     }
     return 0;
 }
@@ -952,72 +954,72 @@ void Tools::Polygonise(int x, int y, int z, double isolevel, PrimitiveObject* pO
         cubeindex |= 128;
 
     /* Cube is entirely in/out of the surface */
-    if (_edgeTable[cubeindex] == 0) {
+    if (m_edgeTable[cubeindex] == 0) {
         return;
     }
 
     // Ищем конкретные положения вершин, используя линейную интерполяцию
     /* Find the vertices where the surface intersects the cube */
-    if ((_edgeTable[cubeindex] & 1) > 0)
+    if ((m_edgeTable[cubeindex] & 1) > 0)
         vertlist[0] = VertexInterp(isolevel, GetPos(x, y, z, 0), GetPos(x, y, z, 1),
             GetVal(x, y, z, 0), GetVal(x, y, z, 1));
-    if ((_edgeTable[cubeindex] & 2) > 0)
+    if ((m_edgeTable[cubeindex] & 2) > 0)
         vertlist[1] = VertexInterp(isolevel, GetPos(x, y, z, 1), GetPos(x, y, z, 2),
             GetVal(x, y, z, 1), GetVal(x, y, z, 2));
-    if ((_edgeTable[cubeindex] & 4) > 0)
+    if ((m_edgeTable[cubeindex] & 4) > 0)
         vertlist[2] = VertexInterp(isolevel, GetPos(x, y, z, 2), GetPos(x, y, z, 3),
             GetVal(x, y, z, 2), GetVal(x, y, z, 3));
-    if ((_edgeTable[cubeindex] & 8) > 0)
+    if ((m_edgeTable[cubeindex] & 8) > 0)
         vertlist[3] = VertexInterp(isolevel, GetPos(x, y, z, 3), GetPos(x, y, z, 0),
             GetVal(x, y, z, 3), GetVal(x, y, z, 0));
-    if ((_edgeTable[cubeindex] & 16) > 0)
+    if ((m_edgeTable[cubeindex] & 16) > 0)
         vertlist[4] = VertexInterp(isolevel, GetPos(x, y, z, 4), GetPos(x, y, z, 5),
             GetVal(x, y, z, 4), GetVal(x, y, z, 5));
-    if ((_edgeTable[cubeindex] & 32) > 0)
+    if ((m_edgeTable[cubeindex] & 32) > 0)
         vertlist[5] = VertexInterp(isolevel, GetPos(x, y, z, 5), GetPos(x, y, z, 6),
             GetVal(x, y, z, 5), GetVal(x, y, z, 6));
-    if ((_edgeTable[cubeindex] & 64) > 0)
+    if ((m_edgeTable[cubeindex] & 64) > 0)
         vertlist[6] = VertexInterp(isolevel, GetPos(x, y, z, 6), GetPos(x, y, z, 7),
             GetVal(x, y, z, 6), GetVal(x, y, z, 7));
-    if ((_edgeTable[cubeindex] & 128) > 0)
+    if ((m_edgeTable[cubeindex] & 128) > 0)
         vertlist[7] = VertexInterp(isolevel, GetPos(x, y, z, 7), GetPos(x, y, z, 4),
             GetVal(x, y, z, 7), GetVal(x, y, z, 4));
-    if ((_edgeTable[cubeindex] & 256) > 0)
+    if ((m_edgeTable[cubeindex] & 256) > 0)
         vertlist[8] = VertexInterp(isolevel, GetPos(x, y, z, 0), GetPos(x, y, z, 4),
             GetVal(x, y, z, 0), GetVal(x, y, z, 4));
-    if ((_edgeTable[cubeindex] & 512) > 0)
+    if ((m_edgeTable[cubeindex] & 512) > 0)
         vertlist[9] = VertexInterp(isolevel, GetPos(x, y, z, 1), GetPos(x, y, z, 5),
             GetVal(x, y, z, 1), GetVal(x, y, z, 5));
-    if ((_edgeTable[cubeindex] & 1024) > 0)
+    if ((m_edgeTable[cubeindex] & 1024) > 0)
         vertlist[10] = VertexInterp(isolevel, GetPos(x, y, z, 2), GetPos(x, y, z, 6),
             GetVal(x, y, z, 2), GetVal(x, y, z, 6));
-    if ((_edgeTable[cubeindex] & 2048) > 0)
+    if ((m_edgeTable[cubeindex] & 2048) > 0)
         vertlist[11] = VertexInterp(isolevel, GetPos(x, y, z, 3), GetPos(x, y, z, 7),
             GetVal(x, y, z, 3), GetVal(x, y, z, 7));
 
     // Ну и создаем треугольник, индексы вершин берем из _triTable, а вершины
     // определяем по cubeindex
     /* Create the triangle */
-    for (i = 0; _triTable[cubeindex][i] != -1; i += 3) {
+    for (i = 0; m_triTable[cubeindex][i] != -1; i += 3) {
         float r = 0.2f;
         float g = 0.6f;
         float b = 0.2f;
 
-        glm::vec3 normal
-            = glm::cross(vertlist[_triTable[cubeindex][i + 1]] - vertlist[_triTable[cubeindex][i]],
-                vertlist[_triTable[cubeindex][i + 2]] - vertlist[_triTable[cubeindex][i]]);
+        glm::vec3 normal = glm::cross(
+            vertlist[m_triTable[cubeindex][i + 1]] - vertlist[m_triTable[cubeindex][i]],
+            vertlist[m_triTable[cubeindex][i + 2]] - vertlist[m_triTable[cubeindex][i]]);
 
         pObject->vertices.push_back(
-            { { vertlist[_triTable[cubeindex][i]].x, vertlist[_triTable[cubeindex][i]].y,
-                  vertlist[_triTable[cubeindex][i]].z },
+            { { vertlist[m_triTable[cubeindex][i]].x, vertlist[m_triTable[cubeindex][i]].y,
+                  vertlist[m_triTable[cubeindex][i]].z },
                 normal, { r, g, b } });
         pObject->vertices.push_back(
-            { { vertlist[_triTable[cubeindex][i + 1]].x, vertlist[_triTable[cubeindex][i + 1]].y,
-                  vertlist[_triTable[cubeindex][i + 1]].z },
+            { { vertlist[m_triTable[cubeindex][i + 1]].x, vertlist[m_triTable[cubeindex][i + 1]].y,
+                  vertlist[m_triTable[cubeindex][i + 1]].z },
                 normal, { r, g, b } });
         pObject->vertices.push_back(
-            { { vertlist[_triTable[cubeindex][i + 2]].x, vertlist[_triTable[cubeindex][i + 2]].y,
-                  vertlist[_triTable[cubeindex][i + 2]].z },
+            { { vertlist[m_triTable[cubeindex][i + 2]].x, vertlist[m_triTable[cubeindex][i + 2]].y,
+                  vertlist[m_triTable[cubeindex][i + 2]].z },
                 normal, { r, g, b } });
 
         ntriang++;

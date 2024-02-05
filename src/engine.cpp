@@ -42,7 +42,7 @@ void Engine::Init()
     m_device = std::make_shared<Device>(m_window);
     m_device->Init();
 
-    Tools::device = m_device;
+    Tools::setDevice(m_device);
 
     m_swapchain = std::make_shared<SwapChain>(m_window, m_device);
     m_swapchain->Init();
@@ -100,7 +100,7 @@ void Engine::createInstance()
         createInfo.pNext = nullptr;
     }
 
-    if (vkCreateInstance(&createInfo, nullptr, &m_window->instance) != VK_SUCCESS) {
+    if (vkCreateInstance(&createInfo, nullptr, &m_window->instance()) != VK_SUCCESS) {
         throw std::runtime_error("failed to create instance!");
     }
 }
@@ -161,9 +161,9 @@ VkResult Engine::CreateDebugUtilsMessengerEXT(
     const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator)
 {
     auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(
-        m_window->instance, "vkCreateDebugUtilsMessengerEXT");
+        m_window->instance(), "vkCreateDebugUtilsMessengerEXT");
     if (func != nullptr) {
-        return func(m_window->instance, pCreateInfo, pAllocator, &m_debugMessenger);
+        return func(m_window->instance(), pCreateInfo, pAllocator, &m_debugMessenger);
     } else {
         return VK_ERROR_EXTENSION_NOT_PRESENT;
     }
@@ -172,9 +172,9 @@ VkResult Engine::CreateDebugUtilsMessengerEXT(
 void Engine::DestroyDebugUtilsMessengerEXT(const VkAllocationCallbacks* pAllocator)
 {
     auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(
-        m_window->instance, "vkDestroyDebugUtilsMessengerEXT");
+        m_window->instance(), "vkDestroyDebugUtilsMessengerEXT");
     if (func != nullptr) {
-        func(m_window->instance, m_debugMessenger, pAllocator);
+        func(m_window->instance(), m_debugMessenger, pAllocator);
     }
 }
 
@@ -212,7 +212,7 @@ void Engine::Run()
         draw();
 
         if (Resource::pressed[GLFW_KEY_ESCAPE])
-            glfwSetWindowShouldClose(m_window->window.get(), GL_TRUE);
+            glfwSetWindowShouldClose(m_window->window(), GL_TRUE);
     }
 
     vkDeviceWaitIdle(m_device->device());
@@ -257,9 +257,9 @@ void Engine::GUIInit()
     // ImGui::StyleColorsClassic();
 
     // Setup Platform/Renderer backends
-    ImGui_ImplGlfw_InitForVulkan(m_window->window.get(), true);
+    ImGui_ImplGlfw_InitForVulkan(m_window->window(), true);
     ImGui_ImplVulkan_InitInfo init_info = {};
-    init_info.Instance = m_window->instance;
+    init_info.Instance = m_window->instance();
     init_info.PhysicalDevice = m_device->physicalDevice();
     init_info.Device = m_device->device();
     init_info.QueueFamily = m_device->queueFamily();
@@ -269,7 +269,7 @@ void Engine::GUIInit()
     init_info.ImageCount = 3;
     init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
 
-    ImGui_ImplVulkan_Init(&init_info, m_graphics->renderer->renderPass);
+    ImGui_ImplVulkan_Init(&init_info, m_graphics->renderer()->renderPass());
 
     {
         // Use any command queue
@@ -293,13 +293,13 @@ void Engine::Update()
     m_v[1] = Resource::sunDir.y;
     m_v[2] = Resource::sunDir.z;
 
-    if (Resource::pressed[GLFW_KEY_LEFT_CONTROL] && !menuSwaped) {
+    if (Resource::pressed[GLFW_KEY_LEFT_CONTROL] && !m_menuSwaped) {
         Resource::showCursor = !Resource::showCursor;
-        menuSwaped = true;
+        m_menuSwaped = true;
     }
 
     if (!Resource::pressed[GLFW_KEY_LEFT_CONTROL])
-        menuSwaped = false;
+        m_menuSwaped = false;
 
     // if (!Resource::showCursor)
     //     glfwSetInputMode(window->window.get(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -338,7 +338,7 @@ void Engine::FrameRender(uint32_t* imageIndex)
 
     vkWaitForFences(m_device->device(), 1, &m_inFlightFences[m_currentFrame], VK_TRUE, UINT64_MAX);
 
-    err = vkAcquireNextImageKHR(m_device->device(), m_swapchain->swapChain, UINT64_MAX,
+    err = vkAcquireNextImageKHR(m_device->device(), m_swapchain->swapChain(), UINT64_MAX,
         m_imageAvailableSemaphores[m_currentFrame], VK_NULL_HANDLE, imageIndex);
     if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR) {
         m_swapChainRebuild = true;
@@ -368,7 +368,7 @@ void Engine::FrameRender(uint32_t* imageIndex)
     submitInfo.pWaitSemaphores = waitSemaphores;
     submitInfo.pWaitDstStageMask = &wait_stage;
     submitInfo.commandBufferCount = 1;
-    submitInfo.pCommandBuffers = &m_graphics->commandBuffers[*imageIndex];
+    submitInfo.pCommandBuffers = &m_graphics->commandBuffers()[*imageIndex];
 
     VkSemaphore signalSemaphores[] = { m_renderFinishedSemaphores[m_currentFrame] };
     submitInfo.signalSemaphoreCount = 1;
@@ -389,7 +389,7 @@ void Engine::MakeFrame()
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     beginInfo.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 
-    vkBeginCommandBuffer(m_graphics->commandBuffers[m_currentFrame], &beginInfo);
+    vkBeginCommandBuffer(m_graphics->commandBuffers()[m_currentFrame], &beginInfo);
 
     std::array<VkClearValue, 2> clearValues {};
     clearValues[0].color = { { 0.0f, 0.0f, 0.0f, 1.0f } };
@@ -397,26 +397,26 @@ void Engine::MakeFrame()
 
     VkRenderPassBeginInfo info = {};
     info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    info.renderPass = m_graphics->renderer->renderPass;
-    info.framebuffer = m_graphics->swapChainFramebuffers[m_currentFrame];
+    info.renderPass = m_graphics->renderer()->renderPass();
+    info.framebuffer = m_graphics->swapChainFramebuffers()[m_currentFrame];
     info.renderArea.extent.width = Resource::swapChainExtent.width;
     info.renderArea.extent.height = Resource::swapChainExtent.height;
     info.clearValueCount = static_cast<uint32_t>(clearValues.size());
     info.pClearValues = clearValues.data();
 
     vkCmdBeginRenderPass(
-        m_graphics->commandBuffers[m_currentFrame], &info, VK_SUBPASS_CONTENTS_INLINE);
+        m_graphics->commandBuffers()[m_currentFrame], &info, VK_SUBPASS_CONTENTS_INLINE);
 
-    m_game->Draw(m_graphics->commandBuffers[m_currentFrame], m_currentFrame);
+    m_game->Draw(m_graphics->commandBuffers()[m_currentFrame], m_currentFrame);
 
     // Record dear imgui primitives into command buffer
     ImGui_ImplVulkan_RenderDrawData(
-        ImGui::GetDrawData(), m_graphics->commandBuffers[m_currentFrame]);
+        ImGui::GetDrawData(), m_graphics->commandBuffers()[m_currentFrame]);
 
     // Submit command buffer
-    vkCmdEndRenderPass(m_graphics->commandBuffers[m_currentFrame]);
+    vkCmdEndRenderPass(m_graphics->commandBuffers()[m_currentFrame]);
 
-    vkEndCommandBuffer(m_graphics->commandBuffers[m_currentFrame]);
+    vkEndCommandBuffer(m_graphics->commandBuffers()[m_currentFrame]);
 }
 
 void Engine::FramePresent(uint32_t imageIndex)
@@ -426,7 +426,7 @@ void Engine::FramePresent(uint32_t imageIndex)
 
     VkSemaphore signalSemaphores[] = { m_renderFinishedSemaphores[m_currentFrame] };
 
-    VkSwapchainKHR swapChains[] = { m_swapchain->swapChain };
+    VkSwapchainKHR swapChains[] = { m_swapchain->swapChain() };
 
     VkPresentInfoKHR presentInfo {};
     presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;

@@ -39,13 +39,13 @@ public:
 
     static PrimitiveObject GetPrimitives(PrimitiveType type);
 
-    static PrimitiveObject GetMCubes(glm::vec3 pos);
-
-    inline static std::shared_ptr<Device> device;
-
     static std::vector<char> readFile(const std::string& filename);
 
+    static void setDevice(const std::shared_ptr<Device>& device) { Tools::m_device = device; }
+
 private:
+    static PrimitiveObject GetMCubes(glm::vec3 pos);
+
     static PrimitiveObject CreateSphere();
 
     static PrimitiveObject GetUnitForCilinder(int sectCount);
@@ -68,13 +68,15 @@ private:
     static glm::vec3 VertexInterp(
         double isolevel, glm::vec3 p1, glm::vec3 p2, double valp1, double valp2);
 
-    static PrimitiveObject quad;
+    static PrimitiveObject m_quad;
 
-    static PrimitiveObject box;
+    static PrimitiveObject m_box;
 
-    static std::vector<int> _edgeTable;
+    static std::vector<int> m_edgeTable;
 
-    static std::vector<std::vector<int>> _triTable;
+    static std::vector<std::vector<int>> m_triTable;
 
-    inline static std::vector<std::vector<std::vector<int>>> Gdata;
+    inline static std::vector<std::vector<std::vector<int>>> m_gdata;
+
+    inline static std::shared_ptr<Device> m_device;
 };

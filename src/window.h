@@ -13,14 +13,21 @@ public:
     WindowManager();
     ~WindowManager();
     void Init();
+
+    VkSurfaceKHR& surface() { return m_surface; }
+    VkInstance& instance() { return m_instance; }
+    void createSurface();
+    bool GetClose();
+
+    GLFWwindow* window() { return m_window.get(); }
+    inline static float m_xPos;
+    inline static float m_yPos;
+
+private:
     static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
     static void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-    bool GetClose();
-    void createSurface();
 
-    std::shared_ptr<GLFWwindow> window;
-    VkSurfaceKHR surface;
-    VkInstance instance;
-    inline static float xpos;
-    inline static float ypos;
+    std::shared_ptr<GLFWwindow> m_window;
+    VkSurfaceKHR m_surface;
+    VkInstance m_instance;
 };

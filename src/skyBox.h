@@ -13,9 +13,10 @@ public:
 
     void Update(float deltaTime);
 
-    glm::vec3 colorTop;
-    glm::vec3 colorBottom;
+private:
+    glm::vec3 m_colorTop;
+    glm::vec3 m_colorBottom;
 
-    std::vector<Vertex> vertices;
-    std::vector<uint16_t> indices;
+    std::vector<Vertex> m_vertices;
+    std::vector<uint16_t> m_indices;
 };

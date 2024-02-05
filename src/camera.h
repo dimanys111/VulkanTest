@@ -15,9 +15,9 @@ public:
 
     const inline static float ViewDistance = 600.f;
 
-    glm::mat4 view() const { return m_view; }
+    glm::mat4& view() { return m_view; }
 
-    glm::mat4 proj() const { return m_proj; }
+    glm::mat4& proj() { return m_proj; }
 
 private:
     float m_yaw;

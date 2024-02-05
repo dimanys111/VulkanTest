@@ -9,8 +9,8 @@
 
 Game::Game(std::shared_ptr<Device> device, std::shared_ptr<Graphics> graphics)
 {
-    this->device = device;
-    this->graphics = graphics;
+    m_device = device;
+    m_graphics = graphics;
 }
 
 Game::~Game() { }
@@ -18,41 +18,41 @@ Game::~Game() { }
 void Game::Init()
 {
 
-    camera = std::make_shared<Camera>(
+    m_camera = std::make_shared<Camera>(
         Resource::swapChainExtent.width, Resource::swapChainExtent.height);
 
-    cube = std::make_shared<Cube>(
-        device, camera, ShadersPath { "shaders/objVert.spv", "shaders/objFrag.spv" });
+    m_cube = std::make_shared<Cube>(
+        m_device, m_camera, ShadersPath { "shaders/objVert.spv", "shaders/objFrag.spv" });
 
-    skyBox = std::make_shared<SkyBox>(
-        device, camera, ShadersPath { "shaders/skyVert.spv", "shaders/skyFrag.spv" });
+    m_skyBox = std::make_shared<SkyBox>(
+        m_device, m_camera, ShadersPath { "shaders/skyVert.spv", "shaders/skyFrag.spv" });
 
-    dirLight = std::make_shared<DirLight>(
-        device, camera, ShadersPath { "shaders/sunVert.spv", "shaders/sunFrag.spv" });
+    m_dirLight = std::make_shared<DirLight>(
+        m_device, m_camera, ShadersPath { "shaders/sunVert.spv", "shaders/sunFrag.spv" });
 
-    graphics->SetGameObject(cube);
-    graphics->SetGameObject(skyBox);
-    graphics->SetGameObject(dirLight);
+    m_graphics->SetGameObject(m_cube);
+    m_graphics->SetGameObject(m_skyBox);
+    m_graphics->SetGameObject(m_dirLight);
 }
 
 void Game::Update(float time)
 {
 
-    camera->Update(time);
+    m_camera->Update(time);
 
-    cube->Update(time);
+    m_cube->Update(time);
 
-    dirLight->SetTarget(camera->GetPosition());
-    dirLight->Update(time);
+    m_dirLight->SetTarget(m_camera->GetPosition());
+    m_dirLight->Update(time);
 
-    skyBox->Update(time);
+    m_skyBox->Update(time);
 }
 
 void Game::Draw(VkCommandBuffer cmd, int indx)
 {
-    cube->Draw(cmd, indx);
+    m_cube->Draw(cmd, indx);
 
-    skyBox->Draw(cmd, indx);
+    m_skyBox->Draw(cmd, indx);
 
-    dirLight->Draw(cmd, indx);
+    m_dirLight->Draw(cmd, indx);
 }

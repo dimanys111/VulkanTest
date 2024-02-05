@@ -14,7 +14,7 @@ public:
     virtual void Init();
     void Draw(VkCommandBuffer commandBuffer, int i);
 
-    std::shared_ptr<Pipeline> pipeline() const { return m_pipeline; }
+    std::shared_ptr<Pipeline>& pipeline() { return m_pipeline; }
 
 protected:
     void SetFrontFace(VkFrontFace face);

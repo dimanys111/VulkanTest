@@ -10,20 +10,29 @@ public:
     ~Model();
     void Init();
 
+    std::vector<uint16_t>& indices() { return m_indices; }
+
+    std::vector<Vertex>& vertices() { return m_vertices; }
+
+    VkBuffer& indexBuffer() { return m_indexBuffer; }
+
+    VkBuffer& vertexBuffer() { return m_vertexBuffer; }
+
+private:
     void createVertexBuffer();
 
     void createIndexBuffer();
 
-    std::vector<Vertex> vertices;
+    std::vector<Vertex> m_vertices;
 
-    std::vector<uint16_t> indices;
+    std::vector<uint16_t> m_indices;
 
-    VkBuffer vertexBuffer;
-    VkDeviceMemory vertexBufferMemory;
-    VkBuffer indexBuffer;
-    VkDeviceMemory indexBufferMemory;
-    VkImage textureImage;
-    VkDeviceMemory textureImageMemory;
+    VkBuffer m_vertexBuffer;
+    VkDeviceMemory m_vertexBufferMemory;
+    VkBuffer m_indexBuffer;
+    VkDeviceMemory m_indexBufferMemory;
+    VkImage m_textureImage;
+    VkDeviceMemory m_textureImageMemory;
 
-    std::shared_ptr<Device> device;
+    std::shared_ptr<Device> m_device;
 };

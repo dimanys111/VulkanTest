@@ -5,10 +5,10 @@ WindowManager::WindowManager() { }
 
 WindowManager::~WindowManager()
 {
-    vkDestroySurfaceKHR(instance, surface, nullptr);
-    vkDestroyInstance(instance, nullptr);
+    vkDestroySurfaceKHR(m_instance, m_surface, nullptr);
+    vkDestroyInstance(m_instance, nullptr);
 
-    glfwDestroyWindow(window.get());
+    glfwDestroyWindow(m_window.get());
 
     glfwTerminate();
 }
@@ -18,12 +18,12 @@ void WindowManager::Init()
     glfwInit();
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-    window = std::shared_ptr<GLFWwindow>(
+    m_window = std::shared_ptr<GLFWwindow>(
         glfwCreateWindow(WIDTH, HEIGHT, "Vulkan", nullptr, nullptr), DestroyGlfwWin());
-    glfwSetWindowUserPointer(window.get(), this);
+    glfwSetWindowUserPointer(m_window.get(), this);
     // glfwSetInputMode(window.get(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    glfwSetKeyCallback(window.get(), key_callback);
-    glfwSetCursorPosCallback(window.get(), mouse_callback);
+    glfwSetKeyCallback(m_window.get(), key_callback);
+    glfwSetCursorPosCallback(m_window.get(), mouse_callback);
 }
 
 void WindowManager::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -42,15 +42,15 @@ void WindowManager::key_callback(GLFWwindow* window, int key, int scancode, int 
 
 void WindowManager::mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-    WindowManager::xpos = xpos;
-    WindowManager::ypos = ypos;
+    m_xPos = xpos;
+    m_yPos = ypos;
 }
 
-bool WindowManager::GetClose() { return glfwWindowShouldClose(window.get()); }
+bool WindowManager::GetClose() { return glfwWindowShouldClose(m_window.get()); }
 
 void WindowManager::createSurface()
 {
-    if (glfwCreateWindowSurface(instance, window.get(), nullptr, &surface) != VK_SUCCESS) {
+    if (glfwCreateWindowSurface(m_instance, m_window.get(), nullptr, &m_surface) != VK_SUCCESS) {
         throw std::runtime_error("failed to create window surface!");
     }
 }
