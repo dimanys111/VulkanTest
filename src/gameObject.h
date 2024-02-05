@@ -14,6 +14,11 @@ public:
 
     void Update(float deltaTime);
 
+    std::string fragFile() const { return m_fragFile; }
+
+    std::string vertFile() const { return m_vertFile; }
+
+protected:
     void setVertex(const std::vector<Vertex>& vertices);
 
     void setIndices(const std::vector<uint16_t>& indices);
@@ -34,13 +39,6 @@ public:
 
     glm::vec3 GetRotate() const;
 
-    std::string vertFile() const { return m_vertFile; }
-
-    std::string fragFile() const { return m_fragFile; }
-
-    void setApplyLight(bool applyLight) { m_applyLight = applyLight; }
-
-private:
     void updateUniformBuffer(float deltaTime) const;
 
     glm::vec3 m_size;

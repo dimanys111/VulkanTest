@@ -12,25 +12,6 @@ public:
 
     void Init();
 
-    void pickPhysicalDevice();
-
-    void createLogicalDevice();
-
-    bool isDeviceSuitable(VkPhysicalDevice device);
-
-    bool checkDeviceExtensionSupport(VkPhysicalDevice device) const;
-
-    SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device) const;
-
-    QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device) const;
-
-    uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
-
-    const inline static std::vector<const char*> validationLayers
-        = { "VK_LAYER_KHRONOS_validation" };
-    const inline static std::vector<const char*> deviceExtensions
-        = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
-
     VkDevice device() const { return m_device; }
 
     VkQueue graphicsQueue() const { return m_graphicsQueue; }
@@ -41,7 +22,26 @@ public:
 
     VkPhysicalDevice physicalDevice() const { return m_physicalDevice; }
 
+    QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device) const;
+
+    uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
+
+    const inline static std::vector<const char*> validationLayers
+        = { "VK_LAYER_KHRONOS_validation" };
+    const inline static std::vector<const char*> deviceExtensions
+        = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+
 private:
+    void pickPhysicalDevice();
+
+    void createLogicalDevice();
+
+    bool isDeviceSuitable(VkPhysicalDevice device);
+
+    bool checkDeviceExtensionSupport(VkPhysicalDevice device) const;
+
+    SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device) const;
+
     VkPhysicalDevice m_physicalDevice = VK_NULL_HANDLE;
     VkDevice m_device;
 

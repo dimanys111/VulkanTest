@@ -47,7 +47,7 @@ SkyBox::SkyBox(
     SetSize(glm::vec3(size, size, size));
     setVertex(vertices);
     setIndices(indices);
-    setApplyLight(false);
+    m_applyLight = false;
     Init();
 }
 
@@ -55,7 +55,7 @@ SkyBox::~SkyBox() { }
 
 void SkyBox::Update(float deltaTime)
 {
-    glm::vec3 pos = camera->GetPosition();
+    glm::vec3 pos = m_camera->GetPosition();
     SetPosition(pos);
     GameObject::Update(deltaTime);
 }

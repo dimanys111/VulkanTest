@@ -10,29 +10,29 @@
 
 Entity::Entity(std::shared_ptr<Device> device, std::shared_ptr<Camera> camera)
 {
-    this->device = device;
-    this->camera = camera;
+    this->m_device = device;
+    this->m_camera = camera;
 
-    modelObj = std::make_shared<Model>(this->device);
+    m_modelObj = std::make_shared<Model>(this->m_device);
 
-    pipeline = std::make_shared<Pipeline>(this->device);
+    m_pipeline = std::make_shared<Pipeline>(this->m_device);
 }
 
 Entity::~Entity()
 {
-    if (pipeline->textureImageView != VK_NULL_HANDLE) {
-        vkDestroyImage(device->device(), textureImage, nullptr);
-        vkFreeMemory(device->device(), textureImageMemory, nullptr);
+    if (m_pipeline->textureImageView != VK_NULL_HANDLE) {
+        vkDestroyImage(m_device->device(), m_textureImage, nullptr);
+        vkFreeMemory(m_device->device(), m_textureImageMemory, nullptr);
     }
 }
 
 void Entity::Init()
 {
-    modelObj->Init();
-    pipeline->Init();
+    m_modelObj->Init();
+    m_pipeline->Init();
 }
 
-void Entity::SetFrontFace(VkFrontFace face) { pipeline->face = face; }
+void Entity::SetFrontFace(VkFrontFace face) { m_pipeline->face = face; }
 
 void Entity::LoadTexture(const std::string& filepath)
 {
@@ -47,8 +47,8 @@ void Entity::LoadModel(const std::string& filepath)
     std::vector<tinyobj::material_t> materials;
     std::string warn, err;
 
-    modelObj->vertices.clear();
-    modelObj->indices.clear();
+    m_modelObj->vertices.clear();
+    m_modelObj->indices.clear();
 
     if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, filepath.c_str())) {
         throw std::runtime_error(warn + err);
@@ -71,8 +71,8 @@ void Entity::LoadModel(const std::string& filepath)
 
             vertex.color = { 0.5f, 0.5f, 0.5f };
 
-            modelObj->vertices.push_back(vertex);
-            modelObj->indices.push_back(modelObj->indices.size());
+            m_modelObj->vertices.push_back(vertex);
+            m_modelObj->indices.push_back(m_modelObj->indices.size());
         }
     }
 }
@@ -95,30 +95,30 @@ void Entity::createTextureImage(const std::string& filepath)
         stagingBufferMemory);
 
     void* data;
-    vkMapMemory(device->device(), stagingBufferMemory, 0, imageSize, 0, &data);
+    vkMapMemory(m_device->device(), stagingBufferMemory, 0, imageSize, 0, &data);
     memcpy(data, pixels, static_cast<size_t>(imageSize));
-    vkUnmapMemory(device->device(), stagingBufferMemory);
+    vkUnmapMemory(m_device->device(), stagingBufferMemory);
 
     stbi_image_free(pixels);
 
     Tools::createImage(texWidth, texHeight, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL,
         VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, textureImage, textureImageMemory);
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_textureImage, m_textureImageMemory);
 
-    transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED,
+    transitionImageLayout(m_textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED,
         VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
-    Tools::copyBufferToImage(stagingBuffer, textureImage, static_cast<uint32_t>(texWidth),
+    Tools::copyBufferToImage(stagingBuffer, m_textureImage, static_cast<uint32_t>(texWidth),
         static_cast<uint32_t>(texHeight));
 
-    vkDestroyBuffer(device->device(), stagingBuffer, nullptr);
-    vkFreeMemory(device->device(), stagingBufferMemory, nullptr);
+    vkDestroyBuffer(m_device->device(), stagingBuffer, nullptr);
+    vkFreeMemory(m_device->device(), stagingBufferMemory, nullptr);
 }
 
 void Entity::createTextureImageView()
 {
-    pipeline->textureImageView
-        = Tools::createImageView(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
+    m_pipeline->textureImageView = Tools::createImageView(
+        m_textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
 }
 
 void Entity::transitionImageLayout(
@@ -171,19 +171,19 @@ void Entity::transitionImageLayout(
 void Entity::Draw(VkCommandBuffer commandBuffer, int i)
 {
 
-    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->graphicsPipeline);
+    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline->graphicsPipeline);
 
-    VkBuffer vertexBuffers[] = { modelObj->vertexBuffer };
+    VkBuffer vertexBuffers[] = { m_modelObj->vertexBuffer };
     VkDeviceSize offsets[] = { 0 };
 
-    if (modelObj->vertices.size() > 0)
+    if (m_modelObj->vertices.size() > 0)
         vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 
-    if (modelObj->indices.size() > 0)
-        vkCmdBindIndexBuffer(commandBuffer, modelObj->indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+    if (m_modelObj->indices.size() > 0)
+        vkCmdBindIndexBuffer(commandBuffer, m_modelObj->indexBuffer, 0, VK_INDEX_TYPE_UINT16);
 
     vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
-        pipeline->pipelineLayout, 0, 1, &pipeline->descriptorSets[i], 0, nullptr);
+        m_pipeline->pipelineLayout, 0, 1, &m_pipeline->descriptorSets[i], 0, nullptr);
     // vkCmdDraw(commandBuffer, static_cast<uint32_t>(vertices.size()), 1, 0, 0);
-    vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(modelObj->indices.size()), 1, 0, 0, 0);
+    vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(m_modelObj->indices.size()), 1, 0, 0, 0);
 }

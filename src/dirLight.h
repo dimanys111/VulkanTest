@@ -11,14 +11,12 @@ public:
         std::shared_ptr<Device> device, std::shared_ptr<Camera> camera, const ShadersPath& paths);
     ~DirLight();
     void Update(float deltaTime);
-
     void SetTarget(glm::vec3 pos);
 
-    std::shared_ptr<Camera> camera;
+private:
+    float m_distance;
+    float m_angle;
 
-    float distance;
-    float angle;
-
-    glm::vec3 sunPos;
-    glm::vec3 target;
+    glm::vec3 m_sunPos;
+    glm::vec3 m_target;
 };

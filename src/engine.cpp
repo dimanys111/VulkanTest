@@ -16,12 +16,12 @@ Engine::~Engine()
 {
 
     for (size_t i = 0; i < Resource::countFrames; i++) {
-        vkDestroySemaphore(device->device(), renderFinishedSemaphores[i], nullptr);
-        vkDestroySemaphore(device->device(), imageAvailableSemaphores[i], nullptr);
-        vkDestroyFence(device->device(), inFlightFences[i], nullptr);
+        vkDestroySemaphore(m_device->device(), m_renderFinishedSemaphores[i], nullptr);
+        vkDestroySemaphore(m_device->device(), m_imageAvailableSemaphores[i], nullptr);
+        vkDestroyFence(m_device->device(), m_inFlightFences[i], nullptr);
     }
 
-    vkDestroyDescriptorPool(device->device(), imguiPool, nullptr);
+    vkDestroyDescriptorPool(m_device->device(), m_imguiPool, nullptr);
 
     if (enableValidationLayers) {
         DestroyDebugUtilsMessengerEXT(nullptr);
@@ -32,35 +32,35 @@ void Engine::Init()
 {
     printf("Initializing vulkan instance.");
 
-    window = std::make_shared<WindowManager>();
-    window->Init();
+    m_window = std::make_shared<WindowManager>();
+    m_window->Init();
 
     createInstance();
     setupDebugMessenger();
-    window->createSurface();
+    m_window->createSurface();
 
-    device = std::make_shared<Device>(window);
-    device->Init();
+    m_device = std::make_shared<Device>(m_window);
+    m_device->Init();
 
-    Tools::device = device;
+    Tools::device = m_device;
 
-    swapchain = std::make_shared<SwapChain>(window, device);
-    swapchain->Init();
+    m_swapchain = std::make_shared<SwapChain>(m_window, m_device);
+    m_swapchain->Init();
 
-    graphics = std::make_shared<Graphics>(window, device, swapchain);
+    m_graphics = std::make_shared<Graphics>(m_window, m_device, m_swapchain);
 
-    game = std::make_shared<Game>(device, graphics);
-    game->Init();
+    m_game = std::make_shared<Game>(m_device, m_graphics);
+    m_game->Init();
 
     GUIInit();
 
-    graphics->Init();
+    m_graphics->Init();
 
     createSyncObjects();
 
-    v[0] = Resource::sunDir.x;
-    v[1] = Resource::sunDir.y;
-    v[2] = Resource::sunDir.z;
+    m_v[0] = Resource::sunDir.x;
+    m_v[1] = Resource::sunDir.y;
+    m_v[2] = Resource::sunDir.z;
 }
 
 void Engine::createInstance()
@@ -89,8 +89,8 @@ void Engine::createInstance()
 
     VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo {};
     if (enableValidationLayers) {
-        createInfo.enabledLayerCount = static_cast<uint32_t>(device->validationLayers.size());
-        createInfo.ppEnabledLayerNames = device->validationLayers.data();
+        createInfo.enabledLayerCount = static_cast<uint32_t>(m_device->validationLayers.size());
+        createInfo.ppEnabledLayerNames = m_device->validationLayers.data();
 
         populateDebugMessengerCreateInfo(debugCreateInfo);
         createInfo.pNext = &debugCreateInfo;
@@ -100,7 +100,7 @@ void Engine::createInstance()
         createInfo.pNext = nullptr;
     }
 
-    if (vkCreateInstance(&createInfo, nullptr, &window->instance) != VK_SUCCESS) {
+    if (vkCreateInstance(&createInfo, nullptr, &m_window->instance) != VK_SUCCESS) {
         throw std::runtime_error("failed to create instance!");
     }
 }
@@ -126,7 +126,7 @@ bool Engine::checkValidationLayerSupport()
     std::vector<VkLayerProperties> availableLayers(layerCount);
     vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
 
-    for (const char* layerName : device->validationLayers) {
+    for (const char* layerName : m_device->validationLayers) {
         bool layerFound = false;
 
         if (std::any_of(
@@ -161,9 +161,9 @@ VkResult Engine::CreateDebugUtilsMessengerEXT(
     const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator)
 {
     auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(
-        window->instance, "vkCreateDebugUtilsMessengerEXT");
+        m_window->instance, "vkCreateDebugUtilsMessengerEXT");
     if (func != nullptr) {
-        return func(window->instance, pCreateInfo, pAllocator, &debugMessenger);
+        return func(m_window->instance, pCreateInfo, pAllocator, &m_debugMessenger);
     } else {
         return VK_ERROR_EXTENSION_NOT_PRESENT;
     }
@@ -172,9 +172,9 @@ VkResult Engine::CreateDebugUtilsMessengerEXT(
 void Engine::DestroyDebugUtilsMessengerEXT(const VkAllocationCallbacks* pAllocator)
 {
     auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(
-        window->instance, "vkDestroyDebugUtilsMessengerEXT");
+        m_window->instance, "vkDestroyDebugUtilsMessengerEXT");
     if (func != nullptr) {
-        func(window->instance, debugMessenger, pAllocator);
+        func(m_window->instance, m_debugMessenger, pAllocator);
     }
 }
 
@@ -205,17 +205,17 @@ std::vector<const char*> Engine::getRequiredExtensions()
 
 void Engine::Run()
 {
-    graphics->setCommandBuffers();
-    while (!window->GetClose()) {
+    m_graphics->setCommandBuffers();
+    while (!m_window->GetClose()) {
         glfwPollEvents();
 
         draw();
 
         if (Resource::pressed[GLFW_KEY_ESCAPE])
-            glfwSetWindowShouldClose(window->window.get(), GL_TRUE);
+            glfwSetWindowShouldClose(m_window->window.get(), GL_TRUE);
     }
 
-    vkDeviceWaitIdle(device->device());
+    vkDeviceWaitIdle(m_device->device());
 
     ImGui_ImplVulkan_Shutdown();
     ImGui_ImplGlfw_Shutdown();
@@ -243,7 +243,7 @@ void Engine::GUIInit()
     pool_info.poolSizeCount = std::size(pool_sizes);
     pool_info.pPoolSizes = pool_sizes;
 
-    vkCreateDescriptorPool(device->device(), &pool_info, nullptr, &imguiPool);
+    vkCreateDescriptorPool(m_device->device(), &pool_info, nullptr, &m_imguiPool);
 
     ImGui::CreateContext();
     const ImGuiIO& io = ImGui::GetIO();
@@ -257,19 +257,19 @@ void Engine::GUIInit()
     // ImGui::StyleColorsClassic();
 
     // Setup Platform/Renderer backends
-    ImGui_ImplGlfw_InitForVulkan(window->window.get(), true);
+    ImGui_ImplGlfw_InitForVulkan(m_window->window.get(), true);
     ImGui_ImplVulkan_InitInfo init_info = {};
-    init_info.Instance = window->instance;
-    init_info.PhysicalDevice = device->physicalDevice();
-    init_info.Device = device->device();
-    init_info.QueueFamily = device->queueFamily();
-    init_info.Queue = device->graphicsQueue();
-    init_info.DescriptorPool = imguiPool;
+    init_info.Instance = m_window->instance;
+    init_info.PhysicalDevice = m_device->physicalDevice();
+    init_info.Device = m_device->device();
+    init_info.QueueFamily = m_device->queueFamily();
+    init_info.Queue = m_device->graphicsQueue();
+    init_info.DescriptorPool = m_imguiPool;
     init_info.MinImageCount = 2;
     init_info.ImageCount = 3;
     init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
 
-    ImGui_ImplVulkan_Init(&init_info, graphics->renderer->renderPass);
+    ImGui_ImplVulkan_Init(&init_info, m_graphics->renderer->renderPass);
 
     {
         // Use any command queue
@@ -287,11 +287,11 @@ void Engine::Update()
                      .count()
         / 1000;
 
-    game->Update(time);
+    m_game->Update(time);
 
-    v[0] = Resource::sunDir.x;
-    v[1] = Resource::sunDir.y;
-    v[2] = Resource::sunDir.z;
+    m_v[0] = Resource::sunDir.x;
+    m_v[1] = Resource::sunDir.y;
+    m_v[2] = Resource::sunDir.z;
 
     if (Resource::pressed[GLFW_KEY_LEFT_CONTROL] && !menuSwaped) {
         Resource::showCursor = !Resource::showCursor;
@@ -320,7 +320,7 @@ void Engine::draw()
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
             1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
-        ImGui::InputFloat3("Sun Dir", v);
+        ImGui::InputFloat3("Sun Dir", m_v);
         ImGui::End();
     }
 
@@ -336,31 +336,31 @@ void Engine::FrameRender(uint32_t* imageIndex)
 {
     VkResult err;
 
-    vkWaitForFences(device->device(), 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
+    vkWaitForFences(m_device->device(), 1, &m_inFlightFences[m_currentFrame], VK_TRUE, UINT64_MAX);
 
-    err = vkAcquireNextImageKHR(device->device(), swapchain->swapChain, UINT64_MAX,
-        imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, imageIndex);
+    err = vkAcquireNextImageKHR(m_device->device(), m_swapchain->swapChain, UINT64_MAX,
+        m_imageAvailableSemaphores[m_currentFrame], VK_NULL_HANDLE, imageIndex);
     if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR) {
-        g_SwapChainRebuild = true;
+        m_swapChainRebuild = true;
         return;
     }
 
-    Resource::currentImage = currentFrame;
+    Resource::currentImage = m_currentFrame;
 
     Update();
 
     // Check if a previous frame is using this image (i.e. there is its fence to
     // wait on)
-    if (imagesInFlight[*imageIndex] != VK_NULL_HANDLE) {
-        vkWaitForFences(device->device(), 1, &imagesInFlight[*imageIndex], VK_TRUE, UINT64_MAX);
+    if (m_imagesInFlight[*imageIndex] != VK_NULL_HANDLE) {
+        vkWaitForFences(m_device->device(), 1, &m_imagesInFlight[*imageIndex], VK_TRUE, UINT64_MAX);
     }
 
     // Mark the image as now being in use by this frame
-    imagesInFlight[*imageIndex] = inFlightFences[currentFrame];
+    m_imagesInFlight[*imageIndex] = m_inFlightFences[m_currentFrame];
 
     MakeFrame();
 
-    VkSemaphore waitSemaphores[] = { imageAvailableSemaphores[currentFrame] };
+    VkSemaphore waitSemaphores[] = { m_imageAvailableSemaphores[m_currentFrame] };
     VkPipelineStageFlags wait_stage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
     VkSubmitInfo submitInfo = {};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -368,28 +368,28 @@ void Engine::FrameRender(uint32_t* imageIndex)
     submitInfo.pWaitSemaphores = waitSemaphores;
     submitInfo.pWaitDstStageMask = &wait_stage;
     submitInfo.commandBufferCount = 1;
-    submitInfo.pCommandBuffers = &graphics->commandBuffers[*imageIndex];
+    submitInfo.pCommandBuffers = &m_graphics->commandBuffers[*imageIndex];
 
-    VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[currentFrame] };
+    VkSemaphore signalSemaphores[] = { m_renderFinishedSemaphores[m_currentFrame] };
     submitInfo.signalSemaphoreCount = 1;
     submitInfo.pSignalSemaphores = signalSemaphores;
 
-    vkResetFences(device->device(), 1, &inFlightFences[currentFrame]);
+    vkResetFences(m_device->device(), 1, &m_inFlightFences[m_currentFrame]);
 
-    vkQueueSubmit(device->graphicsQueue(), 1, &submitInfo, inFlightFences[currentFrame]);
+    vkQueueSubmit(m_device->graphicsQueue(), 1, &submitInfo, m_inFlightFences[m_currentFrame]);
 
-    vkQueueWaitIdle(device->graphicsQueue());
+    vkQueueWaitIdle(m_device->graphicsQueue());
 }
 
 void Engine::MakeFrame()
 {
 
-    vkResetCommandPool(device->device(), Resource::commandPool, 0);
+    vkResetCommandPool(m_device->device(), Resource::commandPool, 0);
     VkCommandBufferBeginInfo beginInfo = {};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     beginInfo.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 
-    vkBeginCommandBuffer(graphics->commandBuffers[currentFrame], &beginInfo);
+    vkBeginCommandBuffer(m_graphics->commandBuffers[m_currentFrame], &beginInfo);
 
     std::array<VkClearValue, 2> clearValues {};
     clearValues[0].color = { { 0.0f, 0.0f, 0.0f, 1.0f } };
@@ -397,34 +397,36 @@ void Engine::MakeFrame()
 
     VkRenderPassBeginInfo info = {};
     info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    info.renderPass = graphics->renderer->renderPass;
-    info.framebuffer = graphics->swapChainFramebuffers[currentFrame];
+    info.renderPass = m_graphics->renderer->renderPass;
+    info.framebuffer = m_graphics->swapChainFramebuffers[m_currentFrame];
     info.renderArea.extent.width = Resource::swapChainExtent.width;
     info.renderArea.extent.height = Resource::swapChainExtent.height;
     info.clearValueCount = static_cast<uint32_t>(clearValues.size());
     info.pClearValues = clearValues.data();
 
-    vkCmdBeginRenderPass(graphics->commandBuffers[currentFrame], &info, VK_SUBPASS_CONTENTS_INLINE);
+    vkCmdBeginRenderPass(
+        m_graphics->commandBuffers[m_currentFrame], &info, VK_SUBPASS_CONTENTS_INLINE);
 
-    game->Draw(graphics->commandBuffers[currentFrame], currentFrame);
+    m_game->Draw(m_graphics->commandBuffers[m_currentFrame], m_currentFrame);
 
     // Record dear imgui primitives into command buffer
-    ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), graphics->commandBuffers[currentFrame]);
+    ImGui_ImplVulkan_RenderDrawData(
+        ImGui::GetDrawData(), m_graphics->commandBuffers[m_currentFrame]);
 
     // Submit command buffer
-    vkCmdEndRenderPass(graphics->commandBuffers[currentFrame]);
+    vkCmdEndRenderPass(m_graphics->commandBuffers[m_currentFrame]);
 
-    vkEndCommandBuffer(graphics->commandBuffers[currentFrame]);
+    vkEndCommandBuffer(m_graphics->commandBuffers[m_currentFrame]);
 }
 
 void Engine::FramePresent(uint32_t imageIndex)
 {
-    if (g_SwapChainRebuild)
+    if (m_swapChainRebuild)
         return;
 
-    VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[currentFrame] };
+    VkSemaphore signalSemaphores[] = { m_renderFinishedSemaphores[m_currentFrame] };
 
-    VkSwapchainKHR swapChains[] = { swapchain->swapChain };
+    VkSwapchainKHR swapChains[] = { m_swapchain->swapChain };
 
     VkPresentInfoKHR presentInfo {};
     presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -434,23 +436,23 @@ void Engine::FramePresent(uint32_t imageIndex)
     presentInfo.pSwapchains = swapChains;
     presentInfo.pImageIndices = &imageIndex;
 
-    VkResult err = vkQueuePresentKHR(device->presentQueue(), &presentInfo);
+    VkResult err = vkQueuePresentKHR(m_device->presentQueue(), &presentInfo);
     if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR) {
-        g_SwapChainRebuild = true;
+        m_swapChainRebuild = true;
         return;
     }
 
-    vkQueueWaitIdle(device->presentQueue());
+    vkQueueWaitIdle(m_device->presentQueue());
 
-    currentFrame = (currentFrame + 1) % Resource::countFrames;
+    m_currentFrame = (m_currentFrame + 1) % Resource::countFrames;
 }
 
 void Engine::createSyncObjects()
 {
-    imageAvailableSemaphores.resize(Resource::countFrames);
-    renderFinishedSemaphores.resize(Resource::countFrames);
-    inFlightFences.resize(Resource::countFrames);
-    imagesInFlight.resize(Resource::countFrames, VK_NULL_HANDLE);
+    m_imageAvailableSemaphores.resize(Resource::countFrames);
+    m_renderFinishedSemaphores.resize(Resource::countFrames);
+    m_inFlightFences.resize(Resource::countFrames);
+    m_imagesInFlight.resize(Resource::countFrames, VK_NULL_HANDLE);
 
     VkSemaphoreCreateInfo semaphoreInfo {};
     semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -461,12 +463,12 @@ void Engine::createSyncObjects()
 
     for (size_t i = 0; i < Resource::countFrames; i++) {
         if (vkCreateSemaphore(
-                device->device(), &semaphoreInfo, nullptr, &imageAvailableSemaphores[i])
+                m_device->device(), &semaphoreInfo, nullptr, &m_imageAvailableSemaphores[i])
                 != VK_SUCCESS
             || vkCreateSemaphore(
-                   device->device(), &semaphoreInfo, nullptr, &renderFinishedSemaphores[i])
+                   m_device->device(), &semaphoreInfo, nullptr, &m_renderFinishedSemaphores[i])
                 != VK_SUCCESS
-            || vkCreateFence(device->device(), &fenceInfo, nullptr, &inFlightFences[i])
+            || vkCreateFence(m_device->device(), &fenceInfo, nullptr, &m_inFlightFences[i])
                 != VK_SUCCESS) {
 
             throw std::runtime_error("failed to create synchronization objects for a frame!");

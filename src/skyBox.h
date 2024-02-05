@@ -8,7 +8,7 @@ class Camera;
 class SkyBox : public GameObject {
 public:
     SkyBox(
-        std::shared_ptr<Device> device, std::shared_ptr<Camera> camera_, const ShadersPath& paths);
+        std::shared_ptr<Device> device, std::shared_ptr<Camera> camera, const ShadersPath& paths);
     ~SkyBox();
 
     void Update(float deltaTime);

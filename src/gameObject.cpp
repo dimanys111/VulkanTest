@@ -25,12 +25,12 @@ void GameObject::Update(float deltaTime)
 
 void GameObject::setVertex(const std::vector<Vertex>& vertices)
 {
-    this->modelObj->vertices = vertices;
+    this->m_modelObj->vertices = vertices;
 }
 
 void GameObject::setIndices(const std::vector<uint16_t>& indices)
 {
-    this->modelObj->indices = indices;
+    this->m_modelObj->indices = indices;
 }
 
 void GameObject::SetPosition(glm::vec3 position)
@@ -80,14 +80,14 @@ void GameObject::updateUniformBuffer(float deltaTime) const
 {
     UniformBufferObject ubo {};
     ubo.model = m_model;
-    ubo.view = camera->view();
-    ubo.proj = camera->proj();
+    ubo.view = m_camera->view();
+    ubo.proj = m_camera->proj();
 
     ubo.sunDir = m_applyLight ? Resource::sunDir : glm::vec3(1.0f, -3.0f, -1.0f);
 
     void* data;
-    vkMapMemory(device->device(), pipeline->uniformBuffersMemory[Resource::currentImage], 0,
+    vkMapMemory(m_device->device(), m_pipeline->uniformBuffersMemory[Resource::currentImage], 0,
         sizeof(ubo), 0, &data);
     memcpy(data, &ubo, sizeof(ubo));
-    vkUnmapMemory(device->device(), pipeline->uniformBuffersMemory[Resource::currentImage]);
+    vkUnmapMemory(m_device->device(), m_pipeline->uniformBuffersMemory[Resource::currentImage]);
 }

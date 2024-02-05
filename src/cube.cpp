@@ -14,7 +14,7 @@ Cube::Cube(std::shared_ptr<Device> device, std::shared_ptr<Camera> camera, const
     LoadTexture("textures/text2.png");
     LoadModel("models/model.obj");
     SetFrontFace(VK_FRONT_FACE_COUNTER_CLOCKWISE);
-    setApplyLight(true);
+    m_applyLight = true;
     Init();
 }
 

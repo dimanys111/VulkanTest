@@ -13,7 +13,7 @@ public:
 
     glm::vec3 GetPosition();
 
-    inline static float ViewDistance = 600.f;
+    const inline static float ViewDistance = 600.f;
 
     glm::mat4 view() const { return m_view; }
 

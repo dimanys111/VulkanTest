@@ -10,7 +10,4 @@ public:
     Cube(std::shared_ptr<Device> device, std::shared_ptr<Camera> camera, const ShadersPath& paths);
     ~Cube();
     void Update(float deltaTime);
-
-private:
-    std::shared_ptr<Camera> m_camera;
 };

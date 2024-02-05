@@ -14,25 +14,12 @@ public:
     Engine();
     virtual ~Engine();
 
-public:
     void Init();
     void Run();
 
     void GUIInit();
 
 private:
-    std::shared_ptr<WindowManager> window;
-    std::shared_ptr<Device> device;
-    std::shared_ptr<SwapChain> swapchain;
-    std::shared_ptr<Graphics> graphics;
-
-    std::vector<VkSemaphore> imageAvailableSemaphores;
-    std::vector<VkSemaphore> renderFinishedSemaphores;
-
-    std::vector<VkFence> inFlightFences;
-    std::vector<VkFence> imagesInFlight;
-    size_t currentFrame = 0;
-
     void Update();
 
     void draw();
@@ -65,21 +52,33 @@ private:
 
     std::vector<const char*> getRequiredExtensions();
 
-    VkPipelineCache g_PipelineCache = VK_NULL_HANDLE;
+    std::shared_ptr<WindowManager> m_window;
+    std::shared_ptr<Device> m_device;
+    std::shared_ptr<SwapChain> m_swapchain;
+    std::shared_ptr<Graphics> m_graphics;
 
-    bool show_demo_window = true;
+    std::vector<VkSemaphore> m_imageAvailableSemaphores;
+    std::vector<VkSemaphore> m_renderFinishedSemaphores;
 
-    bool g_SwapChainRebuild = false;
+    std::vector<VkFence> m_inFlightFences;
+    std::vector<VkFence> m_imagesInFlight;
+    size_t m_currentFrame = 0;
 
-    std::shared_ptr<Game> game;
+    VkPipelineCache m_pipelineCache = VK_NULL_HANDLE;
 
-    float v[3];
+    bool m_show_demo_window = true;
+
+    bool m_swapChainRebuild = false;
+
+    std::shared_ptr<Game> m_game;
+
+    float m_v[3];
 
     bool menuSwaped = false;
 
-    bool show = true;
+    bool m_show = true;
 
-    VkDescriptorPool imguiPool;
+    VkDescriptorPool m_imguiPool;
 
-    VkDebugUtilsMessengerEXT debugMessenger;
+    VkDebugUtilsMessengerEXT m_debugMessenger;
 };

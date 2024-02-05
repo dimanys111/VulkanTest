@@ -37,7 +37,8 @@ void Graphics::Init()
     createDepthResources();
     createFramebuffers();
     for (const auto& go : gameObjects) {
-        go->pipeline->createGraphicsPipeline(go->vertFile(), go->fragFile(), renderer->renderPass);
+        go->pipeline()->createGraphicsPipeline(
+            go->vertFile(), go->fragFile(), renderer->renderPass);
     }
     createCommandBuffers();
 }
@@ -120,8 +121,8 @@ void Graphics::setCommandBuffers()
         vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
         for (const auto& go : gameObjects) {
-            vkCmdBindPipeline(
-                commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, go->pipeline->graphicsPipeline);
+            vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS,
+                go->pipeline()->graphicsPipeline);
 
             go->Draw(commandBuffers[i], i);
         }

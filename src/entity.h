@@ -12,7 +12,11 @@ public:
     Entity(std::shared_ptr<Device> device, std::shared_ptr<Camera> camera);
     virtual ~Entity();
     virtual void Init();
+    void Draw(VkCommandBuffer commandBuffer, int i);
 
+    std::shared_ptr<Pipeline> pipeline() const { return m_pipeline; }
+
+protected:
     void SetFrontFace(VkFrontFace face);
 
     void LoadTexture(const std::string& filepath);
@@ -26,17 +30,15 @@ public:
     void transitionImageLayout(
         VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
 
-    void Draw(VkCommandBuffer commandBuffer, int i);
+    std::shared_ptr<Device> m_device;
+    std::shared_ptr<Camera> m_camera;
 
-    std::shared_ptr<Device> device;
-    std::shared_ptr<Camera> camera;
+    std::shared_ptr<Model> m_modelObj;
 
-    std::shared_ptr<Model> modelObj;
+    std::shared_ptr<Pipeline> m_pipeline;
 
-    std::shared_ptr<Pipeline> pipeline;
+    VkImage m_textureImage = VK_NULL_HANDLE;
+    VkDeviceMemory m_textureImageMemory;
 
-    VkImage textureImage = VK_NULL_HANDLE;
-    VkDeviceMemory textureImageMemory;
-
-    glm::vec3 position;
+    glm::vec3 m_position;
 };
