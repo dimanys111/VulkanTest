@@ -15,7 +15,7 @@ if (NOT CMAKE_VERSION VERSION_LESS 3.7.0)
 endif()
 
 # Add third party libraries
-add_subdirectory(../Vulkan-Samples/third_party third_party)
+add_subdirectory(../../Vulkan-Samples/third_party third_party)
 
 file(GLOB FILES_SRC CONFIGURE_DEPENDS src/obj_loader/*.*)
 
