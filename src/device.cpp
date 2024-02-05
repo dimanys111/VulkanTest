@@ -63,8 +63,8 @@ void Device::createLogicalDevice()
     createInfo.enabledExtensionCount = 0;
 
     if (enableValidationLayers) {
-        createInfo.enabledLayerCount = static_cast<uint32_t>(window->validationLayers.size());
-        createInfo.ppEnabledLayerNames = window->validationLayers.data();
+        createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+        createInfo.ppEnabledLayerNames = validationLayers.data();
     } else {
         createInfo.enabledLayerCount = 0;
     }
@@ -85,8 +85,8 @@ void Device::createLogicalDevice()
     createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
     createInfo.pQueueCreateInfos = queueCreateInfos.data();
 
-    createInfo.enabledExtensionCount = static_cast<uint32_t>(window->deviceExtensions.size());
-    createInfo.ppEnabledExtensionNames = window->deviceExtensions.data();
+    createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
+    createInfo.ppEnabledExtensionNames = deviceExtensions.data();
 
     if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS) {
         throw std::runtime_error("failed to create logical device!");
@@ -117,7 +117,7 @@ bool Device::isDeviceSuitable(VkPhysicalDevice device)
         && supportedFeatures.samplerAnisotropy;
 }
 
-bool Device::checkDeviceExtensionSupport(VkPhysicalDevice device)
+bool Device::checkDeviceExtensionSupport(VkPhysicalDevice device) const
 {
     uint32_t extensionCount;
     vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
@@ -126,8 +126,7 @@ bool Device::checkDeviceExtensionSupport(VkPhysicalDevice device)
     vkEnumerateDeviceExtensionProperties(
         device, nullptr, &extensionCount, availableExtensions.data());
 
-    std::set<std::string> requiredExtensions(
-        window->deviceExtensions.begin(), window->deviceExtensions.end());
+    std::set<std::string> requiredExtensions(deviceExtensions.begin(), deviceExtensions.end());
 
     for (const auto& extension : availableExtensions) {
         requiredExtensions.erase(extension.extensionName);
@@ -136,7 +135,7 @@ bool Device::checkDeviceExtensionSupport(VkPhysicalDevice device)
     return requiredExtensions.empty();
 }
 
-SwapChainSupportDetails Device::querySwapChainSupport(VkPhysicalDevice device)
+SwapChainSupportDetails Device::querySwapChainSupport(VkPhysicalDevice device) const
 {
     SwapChainSupportDetails details;
 
@@ -163,7 +162,7 @@ SwapChainSupportDetails Device::querySwapChainSupport(VkPhysicalDevice device)
     return details;
 }
 
-QueueFamilyIndices Device::findQueueFamilies(VkPhysicalDevice device)
+QueueFamilyIndices Device::findQueueFamilies(VkPhysicalDevice device) const
 {
     QueueFamilyIndices indices;
 

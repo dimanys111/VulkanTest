@@ -45,6 +45,26 @@ private:
 
     void createSyncObjects();
 
+    void createInstance();
+
+    void setupDebugMessenger();
+
+    bool checkValidationLayerSupport();
+
+    void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
+
+    VkResult CreateDebugUtilsMessengerEXT(const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
+        const VkAllocationCallbacks* pAllocator);
+
+    void DestroyDebugUtilsMessengerEXT(const VkAllocationCallbacks* pAllocator);
+
+    static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
+        VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+        VkDebugUtilsMessageTypeFlagsEXT messageType,
+        const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData);
+
+    std::vector<const char*> getRequiredExtensions();
+
     VkPipelineCache g_PipelineCache = VK_NULL_HANDLE;
 
     bool show_demo_window = true;
@@ -60,4 +80,6 @@ private:
     bool show = true;
 
     VkDescriptorPool imguiPool;
+
+    VkDebugUtilsMessengerEXT debugMessenger;
 };
