@@ -17,7 +17,7 @@ public:
     VkSurfaceKHR& surface() { return m_surface; }
     VkInstance& instance() { return m_instance; }
     void createSurface();
-    bool GetClose();
+    bool GetClose() const;
 
     GLFWwindow* window() { return m_window.get(); }
     inline static float m_xPos;

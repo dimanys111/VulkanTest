@@ -1,7 +1,7 @@
 #include "window.h"
 #include "resource.h"
 
-WindowManager::WindowManager() { }
+WindowManager::WindowManager() = default;
 
 WindowManager::~WindowManager()
 {
@@ -26,7 +26,8 @@ void WindowManager::Init()
     glfwSetCursorPosCallback(m_window.get(), mouse_callback);
 }
 
-void WindowManager::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+void WindowManager::key_callback([[maybe_unused]] GLFWwindow* window, int key,
+    [[maybe_unused]] int scancode, int action, [[maybe_unused]] int mods)
 {
     if (key == GLFW_KEY_UNKNOWN)
         return; // Don't accept unknown keys
@@ -35,18 +36,15 @@ void WindowManager::key_callback(GLFWwindow* window, int key, int scancode, int 
         Resource::pressed[key] = true;
     else if (action == GLFW_RELEASE)
         Resource::pressed[key] = false;
-
-    // if (key == GLFW_KEY_E && action == GLFW_PRESS)
-    //     activate_airship();
 }
 
-void WindowManager::mouse_callback(GLFWwindow* window, double xpos, double ypos)
+void WindowManager::mouse_callback([[maybe_unused]] GLFWwindow* window, double xpos, double ypos)
 {
     m_xPos = xpos;
     m_yPos = ypos;
 }
 
-bool WindowManager::GetClose() { return glfwWindowShouldClose(m_window.get()); }
+bool WindowManager::GetClose() const { return glfwWindowShouldClose(m_window.get()); }
 
 void WindowManager::createSurface()
 {

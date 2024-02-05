@@ -509,15 +509,16 @@ PrimitiveObject Tools::CreateSphere()
 
     float radius = 0.2f; // vertex position
 
-    float s, t; // vertex texCoord
+    float s;
+    float t; // vertex texCoord
 
     int stackCount = 20;
     int sectorCount = 20;
-    float sectorStep = 2 * M_PI / sectorCount;
-    float stackStep = M_PI / stackCount;
+    float sectorStep = 2 * M_PIf / static_cast<float>(sectorCount);
+    float stackStep = M_PIf / static_cast<float>(stackCount);
 
     for (int i = 0; i <= stackCount; ++i) {
-        float stackAngle = M_PI / 2 - i * stackStep; // starting from pi/2 to -pi/2
+        float stackAngle = M_PIf / 2 - i * stackStep; // starting from pi/2 to -pi/2
         float xy = radius * cosf(stackAngle); // r * cos(u)
         float z = radius * sinf(stackAngle); // r * sin(u)
 
@@ -532,8 +533,8 @@ PrimitiveObject Tools::CreateSphere()
             float y = xy * sinf(sectorAngle); // r * cos(u) * sin(v)
 
             // vertex tex coord (s, t) range between [0, 1]
-            s = (float)j / sectorCount;
-            t = (float)i / stackCount;
+            s = static_cast<float>(j) / static_cast<float>(sectorCount);
+            t = static_cast<float>(i) / static_cast<float>(stackCount);
 
             pObject.vertices.push_back({ { x, y, z }, { s, t, t } });
         }
