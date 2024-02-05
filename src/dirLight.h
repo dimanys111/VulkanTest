@@ -8,7 +8,8 @@ class GameObject;
 
 class DirLight {
 public:
-    DirLight(std::shared_ptr<Device> device, std::shared_ptr<Camera> camera, const ShadersPath &paths);
+    DirLight(
+        std::shared_ptr<Device> device, std::shared_ptr<Camera> camera, const ShadersPath& paths);
     ~DirLight();
     void Update(float deltaTime);
 

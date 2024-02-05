@@ -3,8 +3,7 @@
 #include "resource.h"
 #include "tools.h"
 
-Cube::Cube(
-    std::shared_ptr<Device> device, std::shared_ptr<Camera> camera, const ShadersPath& paths)
+Cube::Cube(std::shared_ptr<Device> device, std::shared_ptr<Camera> camera, const ShadersPath& paths)
 {
     this->camera = camera;
 

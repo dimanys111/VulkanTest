@@ -15,11 +15,11 @@ public:
 
     void SetFrontFace(VkFrontFace face);
 
-    void LoadTexture(const std::string &filepath);
+    void LoadTexture(const std::string& filepath);
 
-    void LoadModel(const std::string &filepath);
+    void LoadModel(const std::string& filepath);
 
-    void createTextureImage(const std::string &filepath);
+    void createTextureImage(const std::string& filepath);
 
     void createTextureImageView();
 

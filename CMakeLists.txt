@@ -17,50 +17,9 @@ endif()
 # Add third party libraries
 add_subdirectory(../../Vulkan-Samples/third_party third_party)
 
-file(GLOB FILES_SRC CONFIGURE_DEPENDS src/obj_loader/*.*)
+file(GLOB_RECURSE FILES_SRC CONFIGURE_DEPENDS src/*.*)
 
-set(FILES_SRC_MY 
-    src/main.cpp
-
-    src/camera.cpp
-    src/camera.h
-    src/cube.cpp
-    src/cube.h
-    src/device.cpp
-    src/device.h
-    src/dirLight.cpp
-    src/dirLight.h
-    src/engine.cpp
-    src/engine.h
-    src/entity.cpp
-    src/entity.h
-    src/game.cpp
-    src/game.h
-    src/gameObject.cpp
-    src/gameObject.h
-    src/graphics.cpp
-    src/graphics.h
-    src/model.cpp
-    src/model.h
-    src/pipeline.cpp
-    src/pipeline.h
-    src/renderer.cpp
-    src/renderer.h
-    src/resource.h
-    src/SimplexNoise.h
-    src/skyBox.cpp
-    src/skyBox.h
-    src/swapchain.cpp
-    src/swapchain.h
-    src/tools.cpp
-    src/tools.h
-    src/window.cpp
-    src/window.h
-
-    src/stdinclude.h
-)
-
-add_executable(${PROJECT_NAME} WIN32 ${FILES_SRC} ${FILES_SRC_MY})
+add_executable(${PROJECT_NAME} WIN32 ${FILES_SRC})
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 
