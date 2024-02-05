@@ -7,13 +7,13 @@ Model::Model(std::shared_ptr<Device> device) { this->device = device; }
 Model::~Model()
 {
     if (indices.size() > 0) {
-        vkDestroyBuffer(device->device, indexBuffer, nullptr);
-        vkFreeMemory(device->device, indexBufferMemory, nullptr);
+        vkDestroyBuffer(device->device(), indexBuffer, nullptr);
+        vkFreeMemory(device->device(), indexBufferMemory, nullptr);
     }
 
     if (vertices.size() > 0) {
-        vkDestroyBuffer(device->device, vertexBuffer, nullptr);
-        vkFreeMemory(device->device, vertexBufferMemory, nullptr);
+        vkDestroyBuffer(device->device(), vertexBuffer, nullptr);
+        vkFreeMemory(device->device(), vertexBufferMemory, nullptr);
     }
 }
 
@@ -37,9 +37,9 @@ void Model::createVertexBuffer()
         stagingBufferMemory);
 
     void* data;
-    vkMapMemory(device->device, stagingBufferMemory, 0, bufferSize, 0, &data);
+    vkMapMemory(device->device(), stagingBufferMemory, 0, bufferSize, 0, &data);
     memcpy(data, vertices.data(), (size_t)bufferSize);
-    vkUnmapMemory(device->device, stagingBufferMemory);
+    vkUnmapMemory(device->device(), stagingBufferMemory);
 
     Tools::createBuffer(bufferSize,
         VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
@@ -47,8 +47,8 @@ void Model::createVertexBuffer()
 
     Tools::copyBuffer(stagingBuffer, vertexBuffer, bufferSize);
 
-    vkDestroyBuffer(device->device, stagingBuffer, nullptr);
-    vkFreeMemory(device->device, stagingBufferMemory, nullptr);
+    vkDestroyBuffer(device->device(), stagingBuffer, nullptr);
+    vkFreeMemory(device->device(), stagingBufferMemory, nullptr);
 }
 
 void Model::createIndexBuffer()
@@ -66,9 +66,9 @@ void Model::createIndexBuffer()
         stagingBufferMemory);
 
     void* data;
-    vkMapMemory(device->device, stagingBufferMemory, 0, bufferSize, 0, &data);
+    vkMapMemory(device->device(), stagingBufferMemory, 0, bufferSize, 0, &data);
     memcpy(data, indices.data(), (size_t)bufferSize);
-    vkUnmapMemory(device->device, stagingBufferMemory);
+    vkUnmapMemory(device->device(), stagingBufferMemory);
 
     Tools::createBuffer(bufferSize,
         VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
@@ -76,6 +76,6 @@ void Model::createIndexBuffer()
 
     Tools::copyBuffer(stagingBuffer, indexBuffer, bufferSize);
 
-    vkDestroyBuffer(device->device, stagingBuffer, nullptr);
-    vkFreeMemory(device->device, stagingBufferMemory, nullptr);
+    vkDestroyBuffer(device->device(), stagingBuffer, nullptr);
+    vkFreeMemory(device->device(), stagingBufferMemory, nullptr);
 }

@@ -4,13 +4,13 @@
 
 Camera::Camera(float width, float height)
 {
-    mouseSensitivity = 0.f;
-    view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-    proj = glm::perspective(glm::radians(45.0f), width / (float)height, 0.1f, ViewDistance);
-    proj[1][1] *= -1;
+    m_mouseSensitivity = 0.f;
+    m_view = glm::lookAt(m_cameraPos, m_cameraPos + m_cameraFront, m_cameraUp);
+    m_proj = glm::perspective(glm::radians(45.0f), width / (float)height, 0.1f, ViewDistance);
+    m_proj[1][1] *= -1;
 
-    yaw = -90.0f;
-    pitch = 0.0f;
+    m_yaw = -90.0f;
+    m_pitch = 0.0f;
 }
 
 Camera::~Camera() { }
@@ -18,34 +18,34 @@ Camera::~Camera() { }
 void Camera::processMouse(float xpos, float ypos)
 {
 
-    if (firstMouse) {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
+    if (m_firstMouse) {
+        m_lastX = xpos;
+        m_lastY = ypos;
+        m_firstMouse = false;
     }
 
-    float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos;
-    lastX = xpos;
-    lastY = ypos;
+    float xoffset = xpos - m_lastX;
+    float yoffset = m_lastY - ypos;
+    m_lastX = xpos;
+    m_lastY = ypos;
 
-    float sensitivity = 0.05;
+    float sensitivity = 0.05f;
     xoffset *= sensitivity;
     yoffset *= sensitivity;
 
-    yaw += xoffset;
-    pitch += yoffset;
+    m_yaw += xoffset;
+    m_pitch += yoffset;
 
-    if (pitch > 89.0f)
-        pitch = 89.0f;
-    if (pitch < -89.0f)
-        pitch = -89.0f;
+    if (m_pitch > 89.0f)
+        m_pitch = 89.0f;
+    if (m_pitch < -89.0f)
+        m_pitch = -89.0f;
 
     glm::vec3 direction;
-    direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-    direction.y = sin(glm::radians(pitch));
-    direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-    cameraFront = glm::normalize(direction);
+    direction.x = cosf(glm::radians(m_yaw)) * cosf(glm::radians(m_pitch));
+    direction.y = sinf(glm::radians(m_pitch));
+    direction.z = sinf(glm::radians(m_yaw)) * cosf(glm::radians(m_pitch));
+    m_cameraFront = glm::normalize(direction);
 }
 
 void Camera::Update(float deltaTime)
@@ -60,18 +60,20 @@ void Camera::Update(float deltaTime)
         currSpeed = cameraSpeed;
 
     if (Resource::pressed[GLFW_KEY_W])
-        cameraPos += currSpeed * cameraFront * deltaTime;
+        m_cameraPos += currSpeed * m_cameraFront * deltaTime;
     if (Resource::pressed[GLFW_KEY_S])
-        cameraPos -= currSpeed * cameraFront * deltaTime;
+        m_cameraPos -= currSpeed * m_cameraFront * deltaTime;
     if (Resource::pressed[GLFW_KEY_A])
-        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * currSpeed * deltaTime;
+        m_cameraPos
+            -= glm::normalize(glm::cross(m_cameraFront, m_cameraUp)) * currSpeed * deltaTime;
     if (Resource::pressed[GLFW_KEY_D])
-        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * currSpeed * deltaTime;
+        m_cameraPos
+            += glm::normalize(glm::cross(m_cameraFront, m_cameraUp)) * currSpeed * deltaTime;
 
     if (!Resource::showCursor)
         processMouse(WindowManager::xpos, WindowManager::ypos);
 
-    view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+    m_view = glm::lookAt(m_cameraPos, m_cameraPos + m_cameraFront, m_cameraUp);
 }
 
-glm::vec3 Camera::GetPosition() { return cameraPos * 10.f; }
+glm::vec3 Camera::GetPosition() { return m_cameraPos * 10.f; }

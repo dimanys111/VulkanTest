@@ -16,12 +16,12 @@ Engine::~Engine()
 {
 
     for (size_t i = 0; i < Resource::countFrames; i++) {
-        vkDestroySemaphore(device->device, renderFinishedSemaphores[i], nullptr);
-        vkDestroySemaphore(device->device, imageAvailableSemaphores[i], nullptr);
-        vkDestroyFence(device->device, inFlightFences[i], nullptr);
+        vkDestroySemaphore(device->device(), renderFinishedSemaphores[i], nullptr);
+        vkDestroySemaphore(device->device(), imageAvailableSemaphores[i], nullptr);
+        vkDestroyFence(device->device(), inFlightFences[i], nullptr);
     }
 
-    vkDestroyDescriptorPool(device->device, imguiPool, nullptr);
+    vkDestroyDescriptorPool(device->device(), imguiPool, nullptr);
 
     if (enableValidationLayers) {
         DestroyDebugUtilsMessengerEXT(nullptr);
@@ -215,7 +215,7 @@ void Engine::Run()
             glfwSetWindowShouldClose(window->window.get(), GL_TRUE);
     }
 
-    vkDeviceWaitIdle(device->device);
+    vkDeviceWaitIdle(device->device());
 
     ImGui_ImplVulkan_Shutdown();
     ImGui_ImplGlfw_Shutdown();
@@ -243,7 +243,7 @@ void Engine::GUIInit()
     pool_info.poolSizeCount = std::size(pool_sizes);
     pool_info.pPoolSizes = pool_sizes;
 
-    vkCreateDescriptorPool(device->device, &pool_info, nullptr, &imguiPool);
+    vkCreateDescriptorPool(device->device(), &pool_info, nullptr, &imguiPool);
 
     ImGui::CreateContext();
     const ImGuiIO& io = ImGui::GetIO();
@@ -260,10 +260,10 @@ void Engine::GUIInit()
     ImGui_ImplGlfw_InitForVulkan(window->window.get(), true);
     ImGui_ImplVulkan_InitInfo init_info = {};
     init_info.Instance = window->instance;
-    init_info.PhysicalDevice = device->physicalDevice;
-    init_info.Device = device->device;
-    init_info.QueueFamily = device->g_QueueFamily;
-    init_info.Queue = device->graphicsQueue;
+    init_info.PhysicalDevice = device->physicalDevice();
+    init_info.Device = device->device();
+    init_info.QueueFamily = device->queueFamily();
+    init_info.Queue = device->graphicsQueue();
     init_info.DescriptorPool = imguiPool;
     init_info.MinImageCount = 2;
     init_info.ImageCount = 3;
@@ -301,10 +301,10 @@ void Engine::Update()
     if (!Resource::pressed[GLFW_KEY_LEFT_CONTROL])
         menuSwaped = false;
 
-    if (!Resource::showCursor)
-        glfwSetInputMode(window->window.get(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    else
-        glfwSetInputMode(window->window.get(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    // if (!Resource::showCursor)
+    //     glfwSetInputMode(window->window.get(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    // else
+    //     glfwSetInputMode(window->window.get(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
 
 void Engine::draw()
@@ -336,9 +336,9 @@ void Engine::FrameRender(uint32_t* imageIndex)
 {
     VkResult err;
 
-    vkWaitForFences(device->device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
+    vkWaitForFences(device->device(), 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
 
-    err = vkAcquireNextImageKHR(device->device, swapchain->swapChain, UINT64_MAX,
+    err = vkAcquireNextImageKHR(device->device(), swapchain->swapChain, UINT64_MAX,
         imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, imageIndex);
     if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR) {
         g_SwapChainRebuild = true;
@@ -352,7 +352,7 @@ void Engine::FrameRender(uint32_t* imageIndex)
     // Check if a previous frame is using this image (i.e. there is its fence to
     // wait on)
     if (imagesInFlight[*imageIndex] != VK_NULL_HANDLE) {
-        vkWaitForFences(device->device, 1, &imagesInFlight[*imageIndex], VK_TRUE, UINT64_MAX);
+        vkWaitForFences(device->device(), 1, &imagesInFlight[*imageIndex], VK_TRUE, UINT64_MAX);
     }
 
     // Mark the image as now being in use by this frame
@@ -374,17 +374,17 @@ void Engine::FrameRender(uint32_t* imageIndex)
     submitInfo.signalSemaphoreCount = 1;
     submitInfo.pSignalSemaphores = signalSemaphores;
 
-    vkResetFences(device->device, 1, &inFlightFences[currentFrame]);
+    vkResetFences(device->device(), 1, &inFlightFences[currentFrame]);
 
-    vkQueueSubmit(device->graphicsQueue, 1, &submitInfo, inFlightFences[currentFrame]);
+    vkQueueSubmit(device->graphicsQueue(), 1, &submitInfo, inFlightFences[currentFrame]);
 
-    vkQueueWaitIdle(device->graphicsQueue);
+    vkQueueWaitIdle(device->graphicsQueue());
 }
 
 void Engine::MakeFrame()
 {
 
-    vkResetCommandPool(device->device, Resource::commandPool, 0);
+    vkResetCommandPool(device->device(), Resource::commandPool, 0);
     VkCommandBufferBeginInfo beginInfo = {};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     beginInfo.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
@@ -434,13 +434,13 @@ void Engine::FramePresent(uint32_t imageIndex)
     presentInfo.pSwapchains = swapChains;
     presentInfo.pImageIndices = &imageIndex;
 
-    VkResult err = vkQueuePresentKHR(device->presentQueue, &presentInfo);
+    VkResult err = vkQueuePresentKHR(device->presentQueue(), &presentInfo);
     if (err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR) {
         g_SwapChainRebuild = true;
         return;
     }
 
-    vkQueueWaitIdle(device->presentQueue);
+    vkQueueWaitIdle(device->presentQueue());
 
     currentFrame = (currentFrame + 1) % Resource::countFrames;
 }
@@ -460,12 +460,13 @@ void Engine::createSyncObjects()
     fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
     for (size_t i = 0; i < Resource::countFrames; i++) {
-        if (vkCreateSemaphore(device->device, &semaphoreInfo, nullptr, &imageAvailableSemaphores[i])
+        if (vkCreateSemaphore(
+                device->device(), &semaphoreInfo, nullptr, &imageAvailableSemaphores[i])
                 != VK_SUCCESS
             || vkCreateSemaphore(
-                   device->device, &semaphoreInfo, nullptr, &renderFinishedSemaphores[i])
+                   device->device(), &semaphoreInfo, nullptr, &renderFinishedSemaphores[i])
                 != VK_SUCCESS
-            || vkCreateFence(device->device, &fenceInfo, nullptr, &inFlightFences[i])
+            || vkCreateFence(device->device(), &fenceInfo, nullptr, &inFlightFences[i])
                 != VK_SUCCESS) {
 
             throw std::runtime_error("failed to create synchronization objects for a frame!");

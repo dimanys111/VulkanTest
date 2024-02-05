@@ -20,13 +20,13 @@ Graphics::Graphics(std::shared_ptr<WindowManager> window, std::shared_ptr<Device
 Graphics::~Graphics()
 {
 
-    vkDestroyImageView(device->device, depthImageView, nullptr);
+    vkDestroyImageView(device->device(), depthImageView, nullptr);
 
-    vkDestroyImage(device->device, depthImage, nullptr);
-    vkFreeMemory(device->device, depthImageMemory, nullptr);
+    vkDestroyImage(device->device(), depthImage, nullptr);
+    vkFreeMemory(device->device(), depthImageMemory, nullptr);
 
     for (auto framebuffer : swapChainFramebuffers) {
-        vkDestroyFramebuffer(device->device, framebuffer, nullptr);
+        vkDestroyFramebuffer(device->device(), framebuffer, nullptr);
     }
 }
 
@@ -37,7 +37,7 @@ void Graphics::Init()
     createDepthResources();
     createFramebuffers();
     for (const auto& go : gameObjects) {
-        go->pipeline->createGraphicsPipeline(go->vertFile, go->fragFile, renderer->renderPass);
+        go->pipeline->createGraphicsPipeline(go->vertFile(), go->fragFile(), renderer->renderPass);
     }
     createCommandBuffers();
 }
@@ -59,7 +59,7 @@ void Graphics::createFramebuffers()
         framebufferInfo.layers = 1;
 
         if (vkCreateFramebuffer(
-                device->device, &framebufferInfo, nullptr, &swapChainFramebuffers[i])
+                device->device(), &framebufferInfo, nullptr, &swapChainFramebuffers[i])
             != VK_SUCCESS) {
             throw std::runtime_error("failed to create framebuffer!");
         }
@@ -86,7 +86,8 @@ void Graphics::createCommandBuffers()
     allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
     allocInfo.commandBufferCount = (uint32_t)commandBuffers.size();
 
-    if (vkAllocateCommandBuffers(device->device, &allocInfo, commandBuffers.data()) != VK_SUCCESS) {
+    if (vkAllocateCommandBuffers(device->device(), &allocInfo, commandBuffers.data())
+        != VK_SUCCESS) {
         throw std::runtime_error("failed to allocate command buffers!");
     }
 }

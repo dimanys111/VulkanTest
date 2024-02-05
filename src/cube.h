@@ -1,18 +1,16 @@
 #pragma once
 
+#include "gameObject.h"
 #include "stdinclude.h"
-
 class Camera;
 class Device;
-class GameObject;
 
-class Cube {
+class Cube : public GameObject {
 public:
     Cube(std::shared_ptr<Device> device, std::shared_ptr<Camera> camera, const ShadersPath& paths);
     ~Cube();
     void Update(float deltaTime);
 
-    std::shared_ptr<GameObject> go;
-
-    std::shared_ptr<Camera> camera;
+private:
+    std::shared_ptr<Camera> m_camera;
 };

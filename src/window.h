@@ -5,7 +5,7 @@
 class Device;
 
 struct DestroyGlfwWin {
-    void operator()(GLFWwindow* ptr) { glfwDestroyWindow(ptr); }
+    void operator()(GLFWwindow* ptr) const { glfwDestroyWindow(ptr); }
 };
 
 class WindowManager {
@@ -21,6 +21,6 @@ public:
     std::shared_ptr<GLFWwindow> window;
     VkSurfaceKHR surface;
     VkInstance instance;
-    inline static double xpos;
-    inline static double ypos;
+    inline static float xpos;
+    inline static float ypos;
 };

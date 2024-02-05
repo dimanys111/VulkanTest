@@ -8,18 +8,18 @@ Pipeline::Pipeline(std::shared_ptr<Device> device) { this->device = device; }
 Pipeline::~Pipeline()
 {
 
-    vkDestroyDescriptorPool(device->device, descriptorPool, nullptr);
-    vkDestroyDescriptorSetLayout(device->device, descriptorSetLayout, nullptr);
-    vkDestroyPipeline(device->device, graphicsPipeline, nullptr);
-    vkDestroyPipelineLayout(device->device, pipelineLayout, nullptr);
+    vkDestroyDescriptorPool(device->device(), descriptorPool, nullptr);
+    vkDestroyDescriptorSetLayout(device->device(), descriptorSetLayout, nullptr);
+    vkDestroyPipeline(device->device(), graphicsPipeline, nullptr);
+    vkDestroyPipelineLayout(device->device(), pipelineLayout, nullptr);
 
     for (size_t i = 0; i < uniformBuffers.size(); i++) {
-        vkDestroyBuffer(device->device, uniformBuffers[i], nullptr);
-        vkFreeMemory(device->device, uniformBuffersMemory[i], nullptr);
+        vkDestroyBuffer(device->device(), uniformBuffers[i], nullptr);
+        vkFreeMemory(device->device(), uniformBuffersMemory[i], nullptr);
     }
 
-    vkDestroySampler(device->device, textureSampler, nullptr);
-    vkDestroyImageView(device->device, textureImageView, nullptr);
+    vkDestroySampler(device->device(), textureSampler, nullptr);
+    vkDestroyImageView(device->device(), textureImageView, nullptr);
 }
 
 void Pipeline::Init()
@@ -52,7 +52,7 @@ void Pipeline::createTextureSampler()
     samplerInfo.minLod = 0.0f;
     samplerInfo.maxLod = 0.0f;
 
-    if (vkCreateSampler(device->device, &samplerInfo, nullptr, &textureSampler) != VK_SUCCESS) {
+    if (vkCreateSampler(device->device(), &samplerInfo, nullptr, &textureSampler) != VK_SUCCESS) {
         throw std::runtime_error("failed to create texture sampler!");
     }
 }
@@ -65,7 +65,7 @@ VkShaderModule Pipeline::createShaderModule(const std::vector<char>& code)
     createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
 
     VkShaderModule shaderModule;
-    if (vkCreateShaderModule(device->device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
+    if (vkCreateShaderModule(device->device(), &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
         throw std::runtime_error("failed to create shader module!");
     }
 
@@ -177,7 +177,7 @@ void Pipeline::createGraphicsPipeline(
     pipelineLayoutInfo.pSetLayouts = &descriptorSetLayout;
     pipelineLayoutInfo.pushConstantRangeCount = 0;
 
-    if (vkCreatePipelineLayout(device->device, &pipelineLayoutInfo, nullptr, &pipelineLayout)
+    if (vkCreatePipelineLayout(device->device(), &pipelineLayoutInfo, nullptr, &pipelineLayout)
         != VK_SUCCESS) {
         throw std::runtime_error("failed to create pipeline layout!");
     }
@@ -212,13 +212,13 @@ void Pipeline::createGraphicsPipeline(
     pipelineInfo.pDepthStencilState = &depthStencil;
 
     if (vkCreateGraphicsPipelines(
-            device->device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline)
+            device->device(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline)
         != VK_SUCCESS) {
         throw std::runtime_error("failed to create graphics pipeline!");
     }
 
-    vkDestroyShaderModule(device->device, fragShaderModule, nullptr);
-    vkDestroyShaderModule(device->device, vertShaderModule, nullptr);
+    vkDestroyShaderModule(device->device(), fragShaderModule, nullptr);
+    vkDestroyShaderModule(device->device(), vertShaderModule, nullptr);
 }
 
 void Pipeline::createDescriptorPool()
@@ -235,7 +235,8 @@ void Pipeline::createDescriptorPool()
     poolInfo.pPoolSizes = poolSizes.data();
     poolInfo.maxSets = static_cast<uint32_t>(Resource::countFrames);
 
-    if (vkCreateDescriptorPool(device->device, &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS) {
+    if (vkCreateDescriptorPool(device->device(), &poolInfo, nullptr, &descriptorPool)
+        != VK_SUCCESS) {
         throw std::runtime_error("failed to create descriptor pool!");
     }
 }
@@ -265,7 +266,8 @@ void Pipeline::createDescriptorSetLayout()
         layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
         layoutInfo.pBindings = bindings.data();
 
-        if (vkCreateDescriptorSetLayout(device->device, &layoutInfo, nullptr, &descriptorSetLayout)
+        if (vkCreateDescriptorSetLayout(
+                device->device(), &layoutInfo, nullptr, &descriptorSetLayout)
             != VK_SUCCESS) {
             throw std::runtime_error("failed to create descriptor set layout!");
         }
@@ -277,7 +279,8 @@ void Pipeline::createDescriptorSetLayout()
         layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
         layoutInfo.pBindings = bindings.data();
 
-        if (vkCreateDescriptorSetLayout(device->device, &layoutInfo, nullptr, &descriptorSetLayout)
+        if (vkCreateDescriptorSetLayout(
+                device->device(), &layoutInfo, nullptr, &descriptorSetLayout)
             != VK_SUCCESS) {
             throw std::runtime_error("failed to create descriptor set layout!");
         }
@@ -294,7 +297,8 @@ void Pipeline::createDescriptorSets()
     allocInfo.pSetLayouts = layouts.data();
 
     descriptorSets.resize(Resource::countFrames);
-    if (vkAllocateDescriptorSets(device->device, &allocInfo, descriptorSets.data()) != VK_SUCCESS) {
+    if (vkAllocateDescriptorSets(device->device(), &allocInfo, descriptorSets.data())
+        != VK_SUCCESS) {
         throw std::runtime_error("failed to allocate descriptor sets!");
     }
 
@@ -329,7 +333,7 @@ void Pipeline::createDescriptorSets()
             descriptorWrites[1].descriptorCount = 1;
             descriptorWrites[1].pImageInfo = &imageInfo;
 
-            vkUpdateDescriptorSets(device->device, static_cast<uint32_t>(descriptorWrites.size()),
+            vkUpdateDescriptorSets(device->device(), static_cast<uint32_t>(descriptorWrites.size()),
                 descriptorWrites.data(), 0, nullptr);
         } else {
             std::array<VkWriteDescriptorSet, 1> descriptorWrites {};
@@ -342,7 +346,7 @@ void Pipeline::createDescriptorSets()
             descriptorWrites[0].descriptorCount = 1;
             descriptorWrites[0].pBufferInfo = &bufferInfo;
 
-            vkUpdateDescriptorSets(device->device, static_cast<uint32_t>(descriptorWrites.size()),
+            vkUpdateDescriptorSets(device->device(), static_cast<uint32_t>(descriptorWrites.size()),
                 descriptorWrites.data(), 0, nullptr);
         }
     }

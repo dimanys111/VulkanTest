@@ -21,8 +21,8 @@ Entity::Entity(std::shared_ptr<Device> device, std::shared_ptr<Camera> camera)
 Entity::~Entity()
 {
     if (pipeline->textureImageView != VK_NULL_HANDLE) {
-        vkDestroyImage(device->device, textureImage, nullptr);
-        vkFreeMemory(device->device, textureImageMemory, nullptr);
+        vkDestroyImage(device->device(), textureImage, nullptr);
+        vkFreeMemory(device->device(), textureImageMemory, nullptr);
     }
 }
 
@@ -95,9 +95,9 @@ void Entity::createTextureImage(const std::string& filepath)
         stagingBufferMemory);
 
     void* data;
-    vkMapMemory(device->device, stagingBufferMemory, 0, imageSize, 0, &data);
+    vkMapMemory(device->device(), stagingBufferMemory, 0, imageSize, 0, &data);
     memcpy(data, pixels, static_cast<size_t>(imageSize));
-    vkUnmapMemory(device->device, stagingBufferMemory);
+    vkUnmapMemory(device->device(), stagingBufferMemory);
 
     stbi_image_free(pixels);
 
@@ -111,8 +111,8 @@ void Entity::createTextureImage(const std::string& filepath)
     Tools::copyBufferToImage(stagingBuffer, textureImage, static_cast<uint32_t>(texWidth),
         static_cast<uint32_t>(texHeight));
 
-    vkDestroyBuffer(device->device, stagingBuffer, nullptr);
-    vkFreeMemory(device->device, stagingBufferMemory, nullptr);
+    vkDestroyBuffer(device->device(), stagingBuffer, nullptr);
+    vkFreeMemory(device->device(), stagingBufferMemory, nullptr);
 }
 
 void Entity::createTextureImageView()

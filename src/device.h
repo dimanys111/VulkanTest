@@ -26,16 +26,29 @@ public:
 
     uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 
-    VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
-    VkDevice device;
+    const inline static std::vector<const char*> validationLayers
+        = { "VK_LAYER_KHRONOS_validation" };
+    const inline static std::vector<const char*> deviceExtensions
+        = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
-    VkQueue graphicsQueue;
-    VkQueue presentQueue;
+    VkDevice device() const { return m_device; }
 
-    uint32_t g_QueueFamily;
+    VkQueue graphicsQueue() const { return m_graphicsQueue; }
 
-    std::shared_ptr<WindowManager> window;
+    VkQueue presentQueue() const { return m_presentQueue; }
 
-    const std::vector<const char*> validationLayers = { "VK_LAYER_KHRONOS_validation" };
-    const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+    uint32_t queueFamily() const { return m_queueFamily; }
+
+    VkPhysicalDevice physicalDevice() const { return m_physicalDevice; }
+
+private:
+    VkPhysicalDevice m_physicalDevice = VK_NULL_HANDLE;
+    VkDevice m_device;
+
+    VkQueue m_graphicsQueue;
+    VkQueue m_presentQueue;
+
+    uint32_t m_queueFamily;
+
+    std::shared_ptr<WindowManager> m_window;
 };

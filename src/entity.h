@@ -10,7 +10,7 @@ class Pipeline;
 class Entity {
 public:
     Entity(std::shared_ptr<Device> device, std::shared_ptr<Camera> camera);
-    ~Entity();
+    virtual ~Entity();
     virtual void Init();
 
     void SetFrontFace(VkFrontFace face);

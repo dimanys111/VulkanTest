@@ -21,7 +21,7 @@ void WindowManager::Init()
     window = std::shared_ptr<GLFWwindow>(
         glfwCreateWindow(WIDTH, HEIGHT, "Vulkan", nullptr, nullptr), DestroyGlfwWin());
     glfwSetWindowUserPointer(window.get(), this);
-    glfwSetInputMode(window.get(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    // glfwSetInputMode(window.get(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetKeyCallback(window.get(), key_callback);
     glfwSetCursorPosCallback(window.get(), mouse_callback);
 }

@@ -9,7 +9,7 @@ class Camera;
 class GameObject : public Entity {
 public:
     GameObject(std::shared_ptr<Device> device, std::shared_ptr<Camera> camera);
-    ~GameObject();
+    virtual ~GameObject();
     void Init() override;
 
     void Update(float deltaTime);
@@ -26,24 +26,31 @@ public:
 
     void SetSize(glm::vec3 size);
 
-    void SetShadersName(const std::string& vertFile, const std::string& fragFile);
+    void SetShadersName(const std::string_view& vertFile, const std::string_view& fragFile);
 
     void SetRotation(glm::vec3 rotation);
 
     void Rotating(glm::vec3 rotation);
 
-    glm::vec3 GetRotate();
+    glm::vec3 GetRotate() const;
 
-    std::string vertFile, fragFile;
+    std::string vertFile() const { return m_vertFile; }
 
-    bool applyLight;
+    std::string fragFile() const { return m_fragFile; }
+
+    void setApplyLight(bool applyLight) { m_applyLight = applyLight; }
 
 private:
-    void updateUniformBuffer(float deltaTime);
+    void updateUniformBuffer(float deltaTime) const;
 
-    glm::vec3 size;
+    glm::vec3 m_size;
 
-    glm::mat4 model;
-    glm::vec3 position;
-    glm::vec3 rotate;
+    glm::mat4 m_model;
+    glm::vec3 m_position;
+    glm::vec3 m_rotate;
+
+    std::string m_vertFile;
+    std::string m_fragFile;
+
+    bool m_applyLight;
 };

@@ -30,9 +30,9 @@ void Game::Init()
     dirLight = std::make_shared<DirLight>(
         device, camera, ShadersPath { "shaders/sunVert.spv", "shaders/sunFrag.spv" });
 
-    graphics->SetGameObject(cube->go);
-    graphics->SetGameObject(skyBox->go);
-    graphics->SetGameObject(dirLight->go);
+    graphics->SetGameObject(cube);
+    graphics->SetGameObject(skyBox);
+    graphics->SetGameObject(dirLight);
 }
 
 void Game::Update(float time)
@@ -50,9 +50,9 @@ void Game::Update(float time)
 
 void Game::Draw(VkCommandBuffer cmd, int indx)
 {
-    cube->go->Draw(cmd, indx);
+    cube->Draw(cmd, indx);
 
-    skyBox->go->Draw(cmd, indx);
+    skyBox->Draw(cmd, indx);
 
-    dirLight->go->Draw(cmd, indx);
+    dirLight->Draw(cmd, indx);
 }

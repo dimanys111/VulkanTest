@@ -13,21 +13,21 @@ Renderer::Renderer(std::shared_ptr<Device> device)
 Renderer::~Renderer()
 {
 
-    vkDestroyRenderPass(device->device, renderPass, nullptr);
+    vkDestroyRenderPass(device->device(), renderPass, nullptr);
 
-    vkDestroyCommandPool(device->device, Resource::commandPool, nullptr);
+    vkDestroyCommandPool(device->device(), Resource::commandPool, nullptr);
 }
 
 void Renderer::createCommandPool()
 {
-    QueueFamilyIndices queueFamilyIndices = device->findQueueFamilies(device->physicalDevice);
+    QueueFamilyIndices queueFamilyIndices = device->findQueueFamilies(device->physicalDevice());
 
     VkCommandPoolCreateInfo poolInfo {};
     poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
     poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
     poolInfo.flags = 0; // Optional
 
-    if (vkCreateCommandPool(device->device, &poolInfo, nullptr, &Resource::commandPool)
+    if (vkCreateCommandPool(device->device(), &poolInfo, nullptr, &Resource::commandPool)
         != VK_SUCCESS) {
         throw std::runtime_error("failed to create command pool!");
     }
@@ -91,7 +91,7 @@ void Renderer::createRenderPass()
     renderPassInfo.dependencyCount = 1;
     renderPassInfo.pDependencies = &dependency;
 
-    if (vkCreateRenderPass(device->device, &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS) {
+    if (vkCreateRenderPass(device->device(), &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS) {
         throw std::runtime_error("failed to create render pass!");
     }
 }
@@ -101,7 +101,7 @@ VkFormat Renderer::findSupportedFormat(
 {
     for (VkFormat format : candidates) {
         VkFormatProperties props;
-        vkGetPhysicalDeviceFormatProperties(device->physicalDevice, format, &props);
+        vkGetPhysicalDeviceFormatProperties(device->physicalDevice(), format, &props);
 
         if (tiling == VK_IMAGE_TILING_LINEAR
             && (props.linearTilingFeatures & features) == features) {

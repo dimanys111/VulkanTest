@@ -1,12 +1,11 @@
 #pragma once
 
+#include "gameObject.h"
 #include "stdinclude.h"
-
 class Camera;
 class Device;
-class GameObject;
 
-class DirLight {
+class DirLight : public GameObject {
 public:
     DirLight(
         std::shared_ptr<Device> device, std::shared_ptr<Camera> camera, const ShadersPath& paths);
@@ -14,8 +13,6 @@ public:
     void Update(float deltaTime);
 
     void SetTarget(glm::vec3 pos);
-
-    std::shared_ptr<GameObject> go;
 
     std::shared_ptr<Camera> camera;
 
