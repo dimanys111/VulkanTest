@@ -11,7 +11,7 @@ public:
 
     void Update(float deltaTime);
 
-    glm::vec3 GetPosition();
+    glm::vec3 GetPosition() const;
 
     const inline static float ViewDistance = 600.f;
 
@@ -20,9 +20,9 @@ public:
     glm::mat4& proj() { return m_proj; }
 
 private:
-    float m_yaw;
-    float m_pitch;
-    float m_mouseSensitivity;
+    float m_yaw { -90.0f };
+    float m_pitch { 0.0f };
+    float m_mouseSensitivity { 0.f };
     float m_lastX = 400;
     float m_lastY = 300;
     bool m_firstMouse = true;

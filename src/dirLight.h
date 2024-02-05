@@ -14,8 +14,8 @@ public:
     void SetTarget(glm::vec3 pos);
 
 private:
-    float m_distance;
-    float m_angle;
+    float m_distance { 250 };
+    float m_angle { 0.f };
 
     glm::vec3 m_sunPos;
     glm::vec3 m_target;

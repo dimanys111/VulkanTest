@@ -36,7 +36,7 @@ private:
 
     void createLogicalDevice();
 
-    bool isDeviceSuitable(VkPhysicalDevice device);
+    bool isDeviceSuitable(VkPhysicalDevice device) const;
 
     bool checkDeviceExtensionSupport(VkPhysicalDevice device) const;
 

@@ -1,7 +1,10 @@
 #include "device.h"
 #include "window.h"
 
-Device::Device(std::shared_ptr<WindowManager> window) { m_window = window; }
+Device::Device(std::shared_ptr<WindowManager> window)
+    : m_window(window)
+{
+}
 
 Device::~Device() { vkDestroyDevice(m_device, nullptr); }
 
@@ -96,7 +99,7 @@ void Device::createLogicalDevice()
     vkGetDeviceQueue(m_device, indices.graphicsFamily.value(), 0, &m_graphicsQueue);
 }
 
-bool Device::isDeviceSuitable(VkPhysicalDevice device)
+bool Device::isDeviceSuitable(VkPhysicalDevice device) const
 {
     QueueFamilyIndices indices = findQueueFamilies(device);
 
@@ -126,7 +129,8 @@ bool Device::checkDeviceExtensionSupport(VkPhysicalDevice device) const
     vkEnumerateDeviceExtensionProperties(
         device, nullptr, &extensionCount, availableExtensions.data());
 
-    std::set<std::string> requiredExtensions(deviceExtensions.begin(), deviceExtensions.end());
+    std::set<std::string, std::less<>> requiredExtensions(
+        deviceExtensions.begin(), deviceExtensions.end());
 
     for (const auto& extension : availableExtensions) {
         requiredExtensions.erase(extension.extensionName);

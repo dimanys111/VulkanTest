@@ -4,16 +4,12 @@
 
 Camera::Camera(float width, float height)
 {
-    m_mouseSensitivity = 0.f;
     m_view = glm::lookAt(m_cameraPos, m_cameraPos + m_cameraFront, m_cameraUp);
-    m_proj = glm::perspective(glm::radians(45.0f), width / (float)height, 0.1f, ViewDistance);
+    m_proj = glm::perspective(glm::radians(45.0f), width / height, 0.1f, ViewDistance);
     m_proj[1][1] *= -1;
-
-    m_yaw = -90.0f;
-    m_pitch = 0.0f;
 }
 
-Camera::~Camera() { }
+Camera::~Camera() = default;
 
 void Camera::processMouse(float xpos, float ypos)
 {
@@ -76,4 +72,4 @@ void Camera::Update(float deltaTime)
     m_view = glm::lookAt(m_cameraPos, m_cameraPos + m_cameraFront, m_cameraUp);
 }
 
-glm::vec3 Camera::GetPosition() { return m_cameraPos * 10.f; }
+glm::vec3 Camera::GetPosition() const { return m_cameraPos * 10.f; }

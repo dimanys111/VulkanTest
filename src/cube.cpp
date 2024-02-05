@@ -14,10 +14,10 @@ Cube::Cube(std::shared_ptr<Device> device, std::shared_ptr<Camera> camera, const
     LoadModel("models/model.obj");
     SetFrontFace(VK_FRONT_FACE_COUNTER_CLOCKWISE);
     m_applyLight = true;
-    Init();
+    GameObject::Init();
 }
 
-Cube::~Cube() { }
+Cube::~Cube() = default;
 
 void Cube::Update(float deltaTime)
 {

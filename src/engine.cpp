@@ -10,7 +10,7 @@
 #include "tools.h"
 #include "window.h"
 
-Engine::Engine() { }
+Engine::Engine() = default;
 
 Engine::~Engine()
 {
@@ -81,16 +81,14 @@ void Engine::createInstance()
     createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     createInfo.pApplicationInfo = &appInfo;
 
-    const char** glfwExtensions;
-
     auto extensions = getRequiredExtensions();
     createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
     createInfo.ppEnabledExtensionNames = extensions.data();
 
     VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo {};
     if (enableValidationLayers) {
-        createInfo.enabledLayerCount = static_cast<uint32_t>(m_device->validationLayers.size());
-        createInfo.ppEnabledLayerNames = m_device->validationLayers.data();
+        createInfo.enabledLayerCount = static_cast<uint32_t>(Device::validationLayers.size());
+        createInfo.ppEnabledLayerNames = Device::validationLayers.data();
 
         populateDebugMessengerCreateInfo(debugCreateInfo);
         createInfo.pNext = &debugCreateInfo;
@@ -118,7 +116,7 @@ void Engine::setupDebugMessenger()
     }
 }
 
-bool Engine::checkValidationLayerSupport()
+bool Engine::checkValidationLayerSupport() const
 {
     uint32_t layerCount;
     vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
@@ -126,7 +124,7 @@ bool Engine::checkValidationLayerSupport()
     std::vector<VkLayerProperties> availableLayers(layerCount);
     vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
 
-    for (const char* layerName : m_device->validationLayers) {
+    for (const char* layerName : Device::validationLayers) {
         bool layerFound = false;
 
         if (std::any_of(
@@ -144,7 +142,7 @@ bool Engine::checkValidationLayerSupport()
     return true;
 }
 
-void Engine::populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo)
+void Engine::populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo) const
 {
     createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
@@ -182,7 +180,6 @@ VkBool32 Engine::debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSev
     VkDebugUtilsMessageTypeFlagsEXT messageType,
     const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData)
 {
-
     std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
 
     return VK_FALSE;
