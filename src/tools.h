@@ -44,8 +44,6 @@ public:
     static void setDevice(const std::shared_ptr<Device>& device) { Tools::m_device = device; }
 
 private:
-    static PrimitiveObject GetMCubes(glm::vec3 pos);
-
     static PrimitiveObject CreateSphere();
 
     static PrimitiveObject GetUnitForCilinder(int sectCount);
@@ -54,14 +52,10 @@ private:
 
     static PrimitiveObject CreateCapsule();
 
-    static PrimitiveObject MakeMCubes(size_t size, glm::vec3 pos);
-
     // для удобства и избежания лишних расчетов и выделения памяти;)
     static double GetVal(int x, int y, int z, int i);
 
     static glm::vec3 GetPos(int x, int y, int z, int i);
-
-    static void Polygonise(int x, int y, int z, double isolevel, PrimitiveObject* pObject);
 
     // Просто линейная интерполяция, наверное не очень быстрая, но узкое место не
     // здесь

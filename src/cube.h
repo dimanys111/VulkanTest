@@ -9,5 +9,5 @@ class Cube : public GameObject {
 public:
     Cube(std::shared_ptr<Device> device, std::shared_ptr<Camera> camera, const ShadersPath& paths);
     ~Cube();
-    void Update(float deltaTime);
+    void Update(float deltaTime) override;
 };

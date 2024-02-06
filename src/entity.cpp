@@ -9,10 +9,9 @@
 #include "stb_image.h"
 
 Entity::Entity(std::shared_ptr<Device> device, std::shared_ptr<Camera> camera)
+    : m_device(device)
+    , m_camera(camera)
 {
-    m_device = device;
-    m_camera = camera;
-
     m_modelObj = std::make_shared<Model>(m_device);
 
     m_pipeline = std::make_shared<Pipeline>(m_device);

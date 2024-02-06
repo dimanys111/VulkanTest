@@ -501,8 +501,6 @@ PrimitiveObject Tools::GetPrimitives(PrimitiveType type)
     return PrimitiveObject({ {}, {} });
 }
 
-PrimitiveObject Tools::GetMCubes(glm::vec3 pos) { return MakeMCubes(16, pos); }
-
 PrimitiveObject Tools::CreateSphere()
 {
     PrimitiveObject pObject;
@@ -818,47 +816,6 @@ PrimitiveObject Tools::CreateCapsule()
     return pObject;
 }
 
-PrimitiveObject Tools::MakeMCubes(size_t size, glm::vec3 pos)
-{
-
-    PrimitiveObject pObject;
-
-    BasicPerlinNoise noise;
-
-    m_gdata.clear();
-
-    srand(234525);
-
-    m_gdata.resize(size + 1);
-    for (int x = 0; x < size + 1; x++) {
-        m_gdata[x].resize(size + 1);
-        for (int y = 0; y < size + 1; y++) {
-            m_gdata[x][y].resize(size + 1);
-            for (int z = 0; z < size + 1; z++) {
-                float posx = (pos.x * 16) + x;
-                float posz = (pos.z * 16) + z;
-
-                float val = noise.accumulatedOctaveNoise2D(posx / 100, posz / 100, 8.0f) * 10 + 20;
-                if (val > (pos.y * 16) + y)
-                    m_gdata[x][y][z] = val;
-                else
-                    m_gdata[x][y][z] = 0;
-            }
-        }
-    }
-
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-            for (int k = 0; k < size; k++) {
-                // Заполняем _triangles и получаем количество треугольников
-                Polygonise(i, j, k, 5, &pObject);
-            }
-        }
-    }
-
-    return pObject;
-}
-
 double Tools::GetVal(int x, int y, int z, int i)
 {
     switch (i) {
@@ -928,114 +885,6 @@ glm::vec3 Tools::GetPos(int x, int y, int z, int i)
         return nVec;
     }
     return nVec;
-}
-
-void Tools::Polygonise(int x, int y, int z, double isolevel, PrimitiveObject* pObject)
-{
-    glm::vec3 vertlist[12];
-    int i, ntriang = 0;
-    int cubeindex = 0;
-
-    // Определяем какой куб перед нами(фактически индекс в таблице)
-    if (GetVal(x, y, z, 0) > isolevel)
-        cubeindex |= 1;
-    if (GetVal(x, y, z, 1) > isolevel)
-        cubeindex |= 2;
-    if (GetVal(x, y, z, 2) > isolevel)
-        cubeindex |= 4;
-    if (GetVal(x, y, z, 3) > isolevel)
-        cubeindex |= 8;
-    if (GetVal(x, y, z, 4) > isolevel)
-        cubeindex |= 16;
-    if (GetVal(x, y, z, 5) > isolevel)
-        cubeindex |= 32;
-    if (GetVal(x, y, z, 6) > isolevel)
-        cubeindex |= 64;
-    if (GetVal(x, y, z, 7) > isolevel)
-        cubeindex |= 128;
-
-    /* Cube is entirely in/out of the surface */
-    if (m_edgeTable[cubeindex] == 0) {
-        return;
-    }
-
-    // Ищем конкретные положения вершин, используя линейную интерполяцию
-    /* Find the vertices where the surface intersects the cube */
-    if ((m_edgeTable[cubeindex] & 1) > 0)
-        vertlist[0] = VertexInterp(isolevel, GetPos(x, y, z, 0), GetPos(x, y, z, 1),
-            GetVal(x, y, z, 0), GetVal(x, y, z, 1));
-    if ((m_edgeTable[cubeindex] & 2) > 0)
-        vertlist[1] = VertexInterp(isolevel, GetPos(x, y, z, 1), GetPos(x, y, z, 2),
-            GetVal(x, y, z, 1), GetVal(x, y, z, 2));
-    if ((m_edgeTable[cubeindex] & 4) > 0)
-        vertlist[2] = VertexInterp(isolevel, GetPos(x, y, z, 2), GetPos(x, y, z, 3),
-            GetVal(x, y, z, 2), GetVal(x, y, z, 3));
-    if ((m_edgeTable[cubeindex] & 8) > 0)
-        vertlist[3] = VertexInterp(isolevel, GetPos(x, y, z, 3), GetPos(x, y, z, 0),
-            GetVal(x, y, z, 3), GetVal(x, y, z, 0));
-    if ((m_edgeTable[cubeindex] & 16) > 0)
-        vertlist[4] = VertexInterp(isolevel, GetPos(x, y, z, 4), GetPos(x, y, z, 5),
-            GetVal(x, y, z, 4), GetVal(x, y, z, 5));
-    if ((m_edgeTable[cubeindex] & 32) > 0)
-        vertlist[5] = VertexInterp(isolevel, GetPos(x, y, z, 5), GetPos(x, y, z, 6),
-            GetVal(x, y, z, 5), GetVal(x, y, z, 6));
-    if ((m_edgeTable[cubeindex] & 64) > 0)
-        vertlist[6] = VertexInterp(isolevel, GetPos(x, y, z, 6), GetPos(x, y, z, 7),
-            GetVal(x, y, z, 6), GetVal(x, y, z, 7));
-    if ((m_edgeTable[cubeindex] & 128) > 0)
-        vertlist[7] = VertexInterp(isolevel, GetPos(x, y, z, 7), GetPos(x, y, z, 4),
-            GetVal(x, y, z, 7), GetVal(x, y, z, 4));
-    if ((m_edgeTable[cubeindex] & 256) > 0)
-        vertlist[8] = VertexInterp(isolevel, GetPos(x, y, z, 0), GetPos(x, y, z, 4),
-            GetVal(x, y, z, 0), GetVal(x, y, z, 4));
-    if ((m_edgeTable[cubeindex] & 512) > 0)
-        vertlist[9] = VertexInterp(isolevel, GetPos(x, y, z, 1), GetPos(x, y, z, 5),
-            GetVal(x, y, z, 1), GetVal(x, y, z, 5));
-    if ((m_edgeTable[cubeindex] & 1024) > 0)
-        vertlist[10] = VertexInterp(isolevel, GetPos(x, y, z, 2), GetPos(x, y, z, 6),
-            GetVal(x, y, z, 2), GetVal(x, y, z, 6));
-    if ((m_edgeTable[cubeindex] & 2048) > 0)
-        vertlist[11] = VertexInterp(isolevel, GetPos(x, y, z, 3), GetPos(x, y, z, 7),
-            GetVal(x, y, z, 3), GetVal(x, y, z, 7));
-
-    // Ну и создаем треугольник, индексы вершин берем из _triTable, а вершины
-    // определяем по cubeindex
-    /* Create the triangle */
-    for (i = 0; m_triTable[cubeindex][i] != -1; i += 3) {
-        float r = 0.2f;
-        float g = 0.6f;
-        float b = 0.2f;
-
-        glm::vec3 normal = glm::cross(
-            vertlist[m_triTable[cubeindex][i + 1]] - vertlist[m_triTable[cubeindex][i]],
-            vertlist[m_triTable[cubeindex][i + 2]] - vertlist[m_triTable[cubeindex][i]]);
-
-        pObject->vertices.push_back(
-            { { vertlist[m_triTable[cubeindex][i]].x, vertlist[m_triTable[cubeindex][i]].y,
-                  vertlist[m_triTable[cubeindex][i]].z },
-                normal, { r, g, b } });
-        pObject->vertices.push_back(
-            { { vertlist[m_triTable[cubeindex][i + 1]].x, vertlist[m_triTable[cubeindex][i + 1]].y,
-                  vertlist[m_triTable[cubeindex][i + 1]].z },
-                normal, { r, g, b } });
-        pObject->vertices.push_back(
-            { { vertlist[m_triTable[cubeindex][i + 2]].x, vertlist[m_triTable[cubeindex][i + 2]].y,
-                  vertlist[m_triTable[cubeindex][i + 2]].z },
-                normal, { r, g, b } });
-
-        ntriang++;
-    }
-
-    if (ntriang > 0) {
-        int size = pObject->vertices.size() - 1;
-
-        for (int j = 0; j < ntriang; j++) {
-            int step = j * 3;
-            pObject->indices.push_back(size - step - 2);
-            pObject->indices.push_back(size - step - 1);
-            pObject->indices.push_back(size - step);
-        }
-    }
 }
 
 glm::vec3 Tools::VertexInterp(

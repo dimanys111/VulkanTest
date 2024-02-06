@@ -10,7 +10,7 @@ public:
     DirLight(
         std::shared_ptr<Device> device, std::shared_ptr<Camera> camera, const ShadersPath& paths);
     ~DirLight();
-    void Update(float deltaTime);
+    void Update(float deltaTime) override;
     void SetTarget(glm::vec3 pos);
 
 private:

@@ -9,11 +9,10 @@
 
 Graphics::Graphics(std::shared_ptr<WindowManager> window, std::shared_ptr<Device> device,
     std::shared_ptr<SwapChain> swapchain)
+    : m_device(device)
+    , m_window(window)
+    , m_swapchain(swapchain)
 {
-    m_window = window;
-    m_device = device;
-    m_swapchain = swapchain;
-
     m_renderer = std::make_shared<Renderer>(m_device);
 }
 

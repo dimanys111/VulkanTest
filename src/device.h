@@ -48,7 +48,7 @@ private:
     VkQueue m_graphicsQueue;
     VkQueue m_presentQueue;
 
-    uint32_t m_queueFamily;
+    uint32_t m_queueFamily { 0 };
 
     std::shared_ptr<WindowManager> m_window;
 };

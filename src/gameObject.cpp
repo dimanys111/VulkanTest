@@ -74,8 +74,6 @@ void GameObject::Rotating(glm::vec3 rotation)
     m_rotate += rotation;
 }
 
-glm::vec3 GameObject::GetRotate() const { return m_rotate * 10.0f; }
-
 void GameObject::updateUniformBuffer(float deltaTime) const
 {
     UniformBufferObject ubo {};

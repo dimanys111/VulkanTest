@@ -2,7 +2,10 @@
 #include "device.h"
 #include "tools.h"
 
-Model::Model(std::shared_ptr<Device> device) { m_device = device; }
+Model::Model(std::shared_ptr<Device> device)
+    : m_device(device)
+{
+}
 
 Model::~Model()
 {

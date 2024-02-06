@@ -3,7 +3,10 @@
 #include "resource.h"
 #include "tools.h"
 
-Pipeline::Pipeline(std::shared_ptr<Device> device) { m_device = device; }
+Pipeline::Pipeline(std::shared_ptr<Device> device)
+    : m_device(device)
+{
+}
 
 Pipeline::~Pipeline()
 {

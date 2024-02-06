@@ -4,8 +4,8 @@
 #include "resource.h"
 
 Renderer::Renderer(std::shared_ptr<Device> device)
+    : m_device(device)
 {
-    m_device = device;
     createRenderPass();
     createCommandPool();
 }

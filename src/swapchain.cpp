@@ -5,9 +5,9 @@
 #include "window.h"
 
 SwapChain::SwapChain(std::shared_ptr<WindowManager> window, std::shared_ptr<Device> device)
+    : m_device(device)
+    , m_window(window)
 {
-    m_window = window;
-    m_device = device;
 }
 
 SwapChain::~SwapChain()

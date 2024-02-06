@@ -12,7 +12,7 @@ public:
     virtual ~GameObject();
     void Init() override;
 
-    void Update(float deltaTime);
+    virtual void Update(float deltaTime);
 
     std::string& fragFile() { return m_fragFile; }
 
@@ -36,8 +36,6 @@ protected:
     void SetRotation(glm::vec3 rotation);
 
     void Rotating(glm::vec3 rotation);
-
-    glm::vec3 GetRotate() const;
 
     void updateUniformBuffer(float deltaTime) const;
 

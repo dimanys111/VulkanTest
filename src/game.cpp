@@ -8,9 +8,9 @@
 #include "skyBox.h"
 
 Game::Game(std::shared_ptr<Device> device, std::shared_ptr<Graphics> graphics)
+    : m_device(device)
+    , m_graphics(graphics)
 {
-    m_device = device;
-    m_graphics = graphics;
 }
 
 Game::~Game() { }

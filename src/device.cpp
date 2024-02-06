@@ -76,10 +76,10 @@ void Device::createLogicalDevice()
     std::set<uint32_t> uniqueQueueFamilies
         = { indices.graphicsFamily.value(), indices.presentFamily.value() };
 
-    for (uint32_t queueFamily : uniqueQueueFamilies) {
+    for (uint32_t queueFamily_ : uniqueQueueFamilies) {
         VkDeviceQueueCreateInfo queueCreateInfo_ {};
         queueCreateInfo_.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-        queueCreateInfo_.queueFamilyIndex = queueFamily;
+        queueCreateInfo_.queueFamilyIndex = queueFamily_;
         queueCreateInfo_.queueCount = 1;
         queueCreateInfo_.pQueuePriorities = &queuePriority;
         queueCreateInfos.push_back(queueCreateInfo_);
@@ -178,8 +178,8 @@ QueueFamilyIndices Device::findQueueFamilies(VkPhysicalDevice device) const
     vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
 
     int i = 0;
-    for (const auto& queueFamily : queueFamilies) {
-        if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+    for (const auto& queueFamily_ : queueFamilies) {
+        if (queueFamily_.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
             indices.graphicsFamily = i;
         }
 

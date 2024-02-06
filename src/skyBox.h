@@ -11,7 +11,7 @@ public:
         std::shared_ptr<Device> device, std::shared_ptr<Camera> camera, const ShadersPath& paths);
     ~SkyBox();
 
-    void Update(float deltaTime);
+    void Update(float deltaTime) override;
 
 private:
     glm::vec3 m_colorTop;
